@@ -387,24 +387,65 @@ function VueEquipe() {
   );
 }
 
-// ── Vue Clients ───────────────────────────────────────────────────────────────
 function VueClients() {
-  const [items, setItems] = useState(MOCK.clients);
+  const [items, setItems] = useState([]);
   const [modal, setModal] = useState(false);
-  const [form, setForm] = useState({ nom: '', contact: '', email: '', ville: '' });
+  const [confirmId, setConfirmId] = useState(null);
+  const [form, setForm] = useState({ nom: '', contact: '', email: '', ville: '', site_web: '' });
+  const [logoFile, setLogoFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleAdd = () => {
-    if (!form.nom || !form.email) return;
-    setItems([...items, { id: Date.now(), ...form }]);
-    setForm({ nom: '', contact: '', email: '', ville: '' });
-    setModal(false);
+  const API = 'http://localhost:5000';
+
+  const fetchClients = async () => {
+    try {
+      const res = await fetch(`${API}/api/clients`);
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch (err) { console.error(err); }
   };
-  const handleDelete = id => setItems(items.filter(i => i.id !== id));
+
+  useEffect(() => { fetchClients(); }, []);
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setLogoFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleAdd = async () => {
+    if (!form.nom) return;
+    setLoading(true);
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+    if (logoFile) fd.append('logo', logoFile);
+    await fetch(`${API}/api/clients`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      body: fd,
+    });
+    setForm({ nom: '', contact: '', email: '', ville: '', site_web: '' });
+    setLogoFile(null);
+    setPreview(null);
+    setModal(false);
+    setLoading(false);
+    fetchClients();
+  };
+
+  const handleDelete = async () => {
+    await fetch(`${API}/api/clients/${confirmId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    setConfirmId(null);
+    fetchClients();
+  };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6">
         <p className="text-white/30 text-sm">{items.length} client{items.length > 1 ? 's' : ''}</p>
         <button onClick={() => setModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded-lg text-sm transition-colors">
@@ -412,38 +453,124 @@ function VueClients() {
         </button>
       </div>
 
-      <div className="space-y-3">
-        {items.map((c, i) => (
-          <motion.div key={c.id}
-            initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="flex items-center gap-4 p-4 bg-white/[0.03] border border-white/[0.07] rounded-xl hover:border-white/10 transition-colors group"
-          >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-medium flex-shrink-0 ${avatarColor(i + 2)}`}>
-              {c.nom.slice(0, 2).toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{c.nom}</p>
-              <p className="text-white/30 text-xs truncate">{c.contact} · {c.email} · {c.ville}</p>
-            </div>
-            <button onClick={() => handleDelete(c.id)}
-              className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-rose-400 transition-all">
-              <Icon d={ICONS.trash} size={15} />
-            </button>
-          </motion.div>
-        ))}
+      {/* Grille clients */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {items.map((c, i) => {
+          const colors = AVATAR_BG[i % AVATAR_BG.length];
+          return (
+            <motion.div key={c.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.06 }}
+              className="relative group bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-white/[0.14] rounded-2xl p-5 flex flex-col items-center text-center transition-all duration-200"
+            >
+              <button onClick={() => setConfirmId(c.id)}
+                className="absolute top-3 right-3 w-7 h-7 rounded-lg hover:bg-rose-500/20 text-white/0 group-hover:text-rose-400 transition-all flex items-center justify-center">
+                <Icon d={ICONS.trash} size={13} />
+              </button>
+
+              {/* Logo ou initiales */}
+              <div className="w-14 h-14 flex items-center justify-center mb-4 overflow-hidden flex-shrink-0">
+                {c.logo ? (
+                  <img src={`${API}${c.logo}`} alt={c.nom}
+                    className="w-14 h-14 object-contain" />
+                ) : (
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-base font-medium ${colors.bg} ${colors.text}`}>
+                    {c.nom.slice(0, 2).toUpperCase()}
+                  </div>
+                )}
+
+              </div>
+
+              <p className="text-white text-sm font-medium leading-tight mb-1 w-full truncate px-1">{c.nom}</p>
+              {c.ville && <p className="text-white/40 text-xs mb-2">{c.ville}</p>}
+              {c.contact && (
+                <span className="text-xs px-2.5 py-1 rounded-full bg-white/[0.05] text-white/30 border border-white/[0.07] truncate max-w-full">
+                  {c.contact}
+                </span>
+              )}
+              {c.site_web && (
+                <a href={c.site_web} target="_blank" rel="noopener noreferrer"
+                  className="mt-2 text-xs text-cyan-400/60 hover:text-cyan-300 transition-colors">
+                  Site web →
+                </a>
+              )}
+            </motion.div>
+          );
+        })}
+
+        {/* Carte ajout */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: items.length * 0.06 }}
+          onClick={() => setModal(true)}
+          className="bg-white/[0.01] hover:bg-white/[0.04] border border-dashed border-white/[0.12] hover:border-cyan-500/40 rounded-2xl p-5 flex flex-col items-center justify-center gap-2 transition-all duration-200 min-h-[180px] group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/10 group-hover:bg-cyan-500/20 flex items-center justify-center transition-colors">
+            <Icon d={ICONS.plus} size={18} />
+          </div>
+          <span className="text-white/20 group-hover:text-cyan-300 text-xs transition-colors">Nouveau client</span>
+        </motion.button>
       </div>
 
+      {/* Modal ajout */}
       <Modal open={modal} onClose={() => setModal(false)} title="Ajouter un client">
         <div className="space-y-4">
-          <Field label="Nom de la société" name="nom" value={form.nom} onChange={handleChange} placeholder="Société XYZ" />
-          <Field label="Contact principal" name="contact" value={form.contact} onChange={handleChange} placeholder="Prénom Nom" />
-          <Field label="Email" name="email" value={form.email} onChange={handleChange} type="email" placeholder="contact@societe.tn" />
-          <Field label="Ville" name="ville" value={form.ville} onChange={handleChange} placeholder="Tunis, Sfax..." />
-          <button onClick={handleAdd}
-            className="w-full py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 rounded-lg text-sm transition-colors mt-2">
-            Confirmer
+          <div>
+            <label className="block text-white/40 text-xs mb-2">Logo</label>
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 overflow-hidden flex items-center justify-center flex-shrink-0">
+                {preview
+                  ? <img src={preview} alt="preview" className="w-full h-full object-contain p-1" />
+                  : <span className="text-white/20 text-xs">Logo</span>}
+              </div>
+              <label className="flex-1 cursor-pointer px-3 py-2 bg-white/5 border border-dashed border-white/20 hover:border-cyan-400/50 rounded-lg text-white/30 hover:text-cyan-400 text-xs text-center transition-all">
+                Choisir un logo
+                <input type="file" accept="image/*" className="hidden" onChange={handleLogoChange} />
+              </label>
+            </div>
+          </div>
+          <Field label="Nom de la société *" name="nom" value={form.nom}
+            onChange={e => setForm({ ...form, nom: e.target.value })} placeholder="Société XYZ" />
+          <Field label="Contact principal" name="contact" value={form.contact}
+            onChange={e => setForm({ ...form, contact: e.target.value })} placeholder="Prénom Nom" />
+          <Field label="Email" name="email" value={form.email} type="email"
+            onChange={e => setForm({ ...form, email: e.target.value })} placeholder="contact@societe.tn" />
+          <Field label="Ville" name="ville" value={form.ville}
+            onChange={e => setForm({ ...form, ville: e.target.value })} placeholder="Tunis, Sfax..." />
+          <Field label="Site web" name="site_web" value={form.site_web}
+            onChange={e => setForm({ ...form, site_web: e.target.value })} placeholder="https://societe.tn" />
+          <button onClick={handleAdd} disabled={loading || !form.nom}
+            className="w-full py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 disabled:opacity-40 text-cyan-300 rounded-lg text-sm transition-colors">
+            {loading ? 'Ajout en cours...' : 'Confirmer'}
           </button>
+        </div>
+      </Modal>
+
+      {/* Modal confirmation suppression */}
+      <Modal open={!!confirmId} onClose={() => setConfirmId(null)} title="Confirmer la suppression">
+        <div className="space-y-5">
+          <div className="flex items-start gap-3 p-4 bg-rose-500/5 border border-rose-500/15 rounded-xl">
+            <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Icon d={ICONS.trash} size={15} />
+            </div>
+            <div>
+              <p className="text-white text-sm font-medium mb-1">Supprimer ce client ?</p>
+              <p className="text-white/40 text-xs leading-relaxed">
+                Cette action est irréversible. Le client sera définitivement retiré.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => setConfirmId(null)}
+              className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg text-sm transition-colors">
+              Annuler
+            </button>
+            <button onClick={handleDelete}
+              className="flex-1 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-sm transition-colors">
+              Supprimer
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
