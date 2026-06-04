@@ -8,6 +8,7 @@ import CTA from './components/CTA';
 import AISection from './components/AISection';
 import About from './components/About';
 import Footer from './components/Footer';
+import Portfolio from './components/Portfolio';
 import CookieConsent from './components/CookieConsent';
 import './styles/index.css';
 
@@ -50,8 +51,10 @@ function App() {
               <Services />
               <CTA />
               <AISection />
+              <Portfolio />
               <About />
               <Footer />
+              
             </div>
           } />
           <Route path="/contact" element={<ContactPage />} />
@@ -60,7 +63,6 @@ function App() {
           <Route path="/features/plan" element={<PlanPage />} />
           <Route path="/features/build" element={<BuildPage />} />
           <Route path="/features/customer-requests" element={<CustomerRequestsPage />} />
-          <Route path="/features/integrations" element={<IntegrationsPage />} />
           <Route path="/features/integrations" element={<IntegrationsPage />} />
           <Route path="/features/insights" element={<InsightsPage />} />
           <Route path="/features/mobile-app" element={<MobileAppPage />} />

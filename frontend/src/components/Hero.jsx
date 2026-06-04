@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { FiArrowRight, FiPlay, FiCode, FiCpu, FiCloud } from 'react-icons/fi';
+
+
 
 export default function Hero() {
 
   const phrases = [
-    { avant: 'Ingénierie de',  accent: 'Solutions Digitales',  apres: 'Intelligentes' },
     { avant: 'Créateurs de',   accent: 'Produits Numériques',  apres: 'Innovants'     },
+    { avant: 'Ingénierie de',  accent: 'Solutions Digitales',  apres: 'Intelligentes' },
     { avant: 'Architectes de', accent: 'Systèmes IA',          apres: 'Performants'   },
     { avant: 'Bâtisseurs de',  accent: 'Plateformes SaaS',     apres: 'Évolutives'    },
     { avant: 'Experts en',     accent: 'Transformation',       apres: 'Digitale'      },
@@ -15,6 +18,8 @@ export default function Hero() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [displayed, setDisplayed] = useState('');
   const [phase, setPhase] = useState('typing');
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const current = phrases[phraseIndex];
@@ -40,6 +45,7 @@ export default function Hero() {
       }
     }
     return () => clearTimeout(timeout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayed, phase, phraseIndex]);
 
   const current = phrases[phraseIndex];
@@ -131,12 +137,17 @@ export default function Hero() {
             <motion.div className="flex flex-col sm:flex-row gap-4"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.8 }}>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/contact')}
                 className="px-6 py-3 bg-white text-darkBg rounded-lg font-medium text-sm hover:bg-white/90 transition-all flex items-center space-x-2 group justify-center"
                 style={{ fontFamily: "'Manrope',sans-serif" }}>
-                <span>Démarrer un Projet</span>
+                <span>Discutons de votre projet</span>
                 <FiArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </motion.button>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    const el = document.getElementById('portfolio');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 className="px-6 py-3 backdrop-blur-xl bg-white/5 border border-white/10 text-white rounded-lg font-medium text-sm hover:bg-white/10 transition-all flex items-center space-x-2 group justify-center"
                 style={{ fontFamily: "'Manrope',sans-serif" }}>
                 <FiPlay className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -219,7 +230,7 @@ export default function Hero() {
                   <line x1="355" y1="262" x2="362" y2="255" stroke="#38bdf8" strokeWidth="1" opacity="0.5"/>
                   <line x1="355" y1="262" x2="362" y2="269" stroke="#38bdf8" strokeWidth="1" opacity="0.5"/>
                   <text x="378" y="264" fill="white" fontSize="11" fontFamily="Manrope,sans-serif" fontWeight="400" opacity="0.85">Intelligence</text>
-                  <text x="320" y="296" fill="white" fontSize="11" fontFamily="Manrope,sans-serif" fontWeight="300" opacity="0.5" textAnchor="start" x="327">Artificielle</text>
+                  <text x="320" y="296" fill="white" fontSize="11" fontFamily="Manrope,sans-serif" fontWeight="300" opacity="0.5" textAnchor="start">Artificielle</text>
                 </g>
 
                 {/* Carte Cybersécurité */}
@@ -299,12 +310,17 @@ export default function Hero() {
           <motion.div className="flex flex-col gap-3"
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
             <motion.button whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/contact')}
               className="w-full px-6 py-3 bg-white text-darkBg rounded-lg font-medium text-sm hover:bg-white/90 transition-all flex items-center justify-center space-x-2"
               style={{ fontFamily: "'Manrope',sans-serif" }}>
-              <span>Démarrer un Projet</span>
+              <span>Discutons de votre projet</span>
               <FiArrowRight className="w-4 h-4" />
             </motion.button>
             <motion.button whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                const el = document.getElementById('portfolio');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="w-full px-6 py-3 backdrop-blur-xl bg-white/5 border border-white/10 text-white rounded-lg font-medium text-sm hover:bg-white/10 transition-all flex items-center justify-center space-x-2"
               style={{ fontFamily: "'Manrope',sans-serif" }}>
               <FiPlay className="w-4 h-4" />

@@ -76,7 +76,7 @@ export default function Services() {
   }, []);
 
   return (
-    <section id="services" className="py-12 lg:py-32 relative overflow-hidden">
+    <section id="services" className="py-12 lg:py-8 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-violet/10 rounded-full blur-3xl" />

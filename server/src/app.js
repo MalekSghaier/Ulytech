@@ -5,6 +5,9 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const clientRoutes = require('./routes/clientRoutes');
+const appRoutes = require('./routes/appRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+
 
 const path = require('path');
 
@@ -17,6 +20,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/clients', clientRoutes);
+app.use('/api/apps', appRoutes);
+app.use('/api/contact', contactRoutes);
+
+
 
 
 app.get('/', (req, res) => res.json({ message: 'API UlyTech opérationnelle ✅' }));

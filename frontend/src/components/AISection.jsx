@@ -32,7 +32,7 @@ export default function AISection() {
   }, [codeToType]);
 
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="py-6 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-40 right-20 w-96 h-96 bg-aquaBlue/10 rounded-full blur-3xl" />

@@ -22,6 +22,8 @@ const ICONS = {
   user:    "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z",
   check:   "M5 13l4 4L19 7",
   trash:   "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16",
+  grid:    "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+
 };
 
 // ── Données mock ──────────────────────────────────────────────────────────────
@@ -654,7 +656,343 @@ const NAV = [
   { id: 'equipe',    label: 'Équipe',   icon: ICONS.team    },
   { id: 'clients',   label: 'Clients',  icon: ICONS.clients },
   { id: 'services',  label: 'Services', icon: ICONS.services},
+  { id: 'apps', label: 'Applications', icon: ICONS.grid },
+
 ];
+
+
+const STATUT_COLORS = {
+  production: { bg: 'bg-emerald-500/15', text: 'text-emerald-400', label: 'Production' },
+  beta:       { bg: 'bg-amber-500/15',   text: 'text-amber-400',   label: 'Bêta'       },
+  dev:        { bg: 'bg-sky-500/15',     text: 'text-sky-400',     label: 'En dev'     },
+  archive:    { bg: 'bg-white/5',        text: 'text-white/30',    label: 'Archivé'    },
+};
+
+function VueApps() {
+  const [apps, setApps] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [modal, setModal] = useState(false);
+  const [confirmId, setConfirmId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [screenshotFiles, setScreenshotFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
+  const [form, setForm] = useState({
+    nom: '', description: '', url_site: '', url_repo: '',
+    categorie: '', technologies: '', statut: 'production',
+  });
+
+  const API = 'http://localhost:5000';
+
+  const fetchApps = async () => {
+    try {
+      const res = await fetch(`${API}/api/apps`);
+      const data = await res.json();
+      setApps(Array.isArray(data) ? data : []);
+    } catch (err) { console.error(err); }
+  };
+
+  useEffect(() => { fetchApps(); }, []);
+
+  const handleScreenshots = (e) => {
+    const files = Array.from(e.target.files).slice(0, 10);
+    setScreenshotFiles(files);
+    setPreviews(files.map(f => URL.createObjectURL(f)));
+  };
+
+  const handleAdd = async () => {
+    if (!form.nom) return;
+    setLoading(true);
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+    screenshotFiles.forEach(f => fd.append('screenshots', f));
+    await fetch(`${API}/api/apps`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      body: fd,
+    });
+    setForm({ nom: '', description: '', url_site: '', url_repo: '', categorie: '', technologies: '', statut: 'production' });
+    setScreenshotFiles([]);
+    setPreviews([]);
+    setModal(false);
+    setLoading(false);
+    fetchApps();
+  };
+
+  const handleDelete = async () => {
+    await fetch(`${API}/api/apps/${confirmId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    setConfirmId(null);
+    if (selected?.id === confirmId) setSelected(null);
+    fetchApps();
+  };
+
+  // Vue détail d'une app
+  if (selected) {
+    const app = apps.find(a => a.id === selected.id) || selected;
+    const statut = STATUT_COLORS[app.statut] || STATUT_COLORS.production;
+    return (
+      <div>
+        {/* Retour */}
+        <button onClick={() => setSelected(null)}
+          className="flex items-center gap-2 text-white/30 hover:text-white text-sm mb-6 transition-colors">
+          <Icon d="M15 19l-7-7 7-7" size={16} /> Retour aux applications
+        </button>
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Infos */}
+          <div className="lg:col-span-1 space-y-4">
+            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-white font-medium text-lg">{app.nom}</h2>
+                  {app.categorie && <p className="text-white/30 text-xs mt-0.5">{app.categorie}</p>}
+                </div>
+                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statut.bg} ${statut.text}`}>
+                  {statut.label}
+                </span>
+              </div>
+              {app.description && <p className="text-white/50 text-sm leading-relaxed mb-4">{app.description}</p>}
+
+              {/* Technologies */}
+              {app.technologies?.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {app.technologies.map(t => (
+                    <span key={t} className="text-xs px-2 py-1 rounded-lg bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Liens */}
+              <div className="space-y-2">
+                {app.url_site && (
+                  <a href={app.url_site} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-cyan-400/70 hover:text-cyan-300 transition-colors">
+                    <Icon d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" size={14} />
+                    Voir le site
+                  </a>
+                )}
+                {app.url_repo && (
+                  <a href={app.url_repo} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-white/30 hover:text-white/60 transition-colors">
+                    <Icon d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" size={14} />
+                    Code source
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <button onClick={() => setConfirmId(app.id)}
+              className="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+              <Icon d={ICONS.trash} size={14} /> Supprimer l'application
+            </button>
+          </div>
+
+          {/* Screenshots */}
+          <div className="lg:col-span-2">
+            {app.screenshots?.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {app.screenshots.map((s, i) => (
+                  <motion.div key={s.id}
+                    initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.08 }}
+                    className="rounded-xl overflow-hidden border border-white/[0.07] group"
+                  >
+                    <img src={`${API}${s.image}`} alt={`capture ${i + 1}`}
+                      className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-48 rounded-2xl border border-dashed border-white/10 flex items-center justify-center">
+                <p className="text-white/20 text-sm">Aucune capture d'écran</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Modal confirm suppression */}
+        <Modal open={!!confirmId} onClose={() => setConfirmId(null)} title="Supprimer l'application">
+          <div className="space-y-5">
+            <div className="flex items-start gap-3 p-4 bg-rose-500/5 border border-rose-500/15 rounded-xl">
+              <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center flex-shrink-0">
+                <Icon d={ICONS.trash} size={15} />
+              </div>
+              <div>
+                <p className="text-white text-sm font-medium mb-1">Supprimer "{app.nom}" ?</p>
+                <p className="text-white/40 text-xs">Toutes les captures seront supprimées définitivement.</p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmId(null)}
+                className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg text-sm transition-colors">
+                Annuler
+              </button>
+              <button onClick={handleDelete}
+                className="flex-1 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-sm transition-colors">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    );
+  }
+
+  // Vue liste des apps
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-white/30 text-sm">{apps.length} application{apps.length > 1 ? 's' : ''}</p>
+        <button onClick={() => setModal(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 rounded-lg text-sm transition-colors">
+          <Icon d={ICONS.plus} size={14} /> Ajouter
+        </button>
+      </div>
+
+      {/* Grille apps */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {apps.map((app, i) => {
+          const statut = STATUT_COLORS[app.statut] || STATUT_COLORS.production;
+          const cover = app.screenshots?.[0];
+          return (
+            <motion.div key={app.id}
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07 }}
+              onClick={() => setSelected(app)}
+              className="group cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-white/[0.16] rounded-2xl overflow-hidden transition-all duration-200"
+            >
+              {/* Capture */}
+              <div className="h-40 bg-white/[0.02] overflow-hidden relative">
+                {cover ? (
+                  <img src={`${API}${cover.image}`} alt={app.nom}
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Icon d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" size={32} />
+                  </div>
+                )}
+                {/* Badge statut */}
+                <div className="absolute top-3 right-3">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium backdrop-blur-sm ${statut.bg} ${statut.text}`}>
+                    {statut.label}
+                  </span>
+                </div>
+                {/* Overlay au hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white text-xs">Voir les détails →</span>
+                </div>
+              </div>
+
+              {/* Infos */}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <p className="text-white text-sm font-medium leading-snug">{app.nom}</p>
+                  {app.categorie && (
+                    <span className="text-xs px-2 py-0.5 rounded-lg bg-white/5 text-white/30 flex-shrink-0">
+                      {app.categorie}
+                    </span>
+                  )}
+                </div>
+
+                {app.description && (
+                  <p className="text-white/40 text-xs leading-relaxed line-clamp-2 mb-3">{app.description}</p>
+                )}
+
+                {/* Tech pills */}
+                {app.technologies?.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {app.technologies.slice(0, 3).map(t => (
+                      <span key={t} className="text-xs px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-400/70">
+                        {t}
+                      </span>
+                    ))}
+                    {app.technologies.length > 3 && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-white/20">
+                        +{app.technologies.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {/* Carte ajout */}
+        <motion.button
+          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: apps.length * 0.07 }}
+          onClick={() => setModal(true)}
+          className="h-full min-h-[260px] bg-white/[0.01] hover:bg-white/[0.04] border border-dashed border-white/[0.10] hover:border-indigo-500/40 rounded-2xl flex flex-col items-center justify-center gap-3 transition-all duration-200 group"
+        >
+          <div className="w-12 h-12 rounded-xl bg-indigo-500/10 group-hover:bg-indigo-500/20 flex items-center justify-center transition-colors">
+            <Icon d={ICONS.plus} size={20} />
+          </div>
+          <span className="text-white/20 group-hover:text-indigo-300 text-sm transition-colors">Nouvelle application</span>
+        </motion.button>
+      </div>
+
+      {/* Modal ajout */}
+      <Modal open={modal} onClose={() => setModal(false)} title="Ajouter une application">
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+
+          {/* Screenshots */}
+          <div>
+            <label className="block text-white/40 text-xs mb-2">Captures d'écran (max 10)</label>
+            {previews.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2 mb-2">
+                {previews.map((p, i) => (
+                  <img key={i} src={p} alt="" className="w-full h-20 object-cover rounded-lg border border-white/10" />
+                ))}
+              </div>
+            ) : null}
+            <label className="block cursor-pointer px-3 py-2.5 bg-white/5 border border-dashed border-white/20 hover:border-indigo-400/50 rounded-lg text-white/30 hover:text-indigo-400 text-xs text-center transition-all">
+              {previews.length > 0 ? `${previews.length} capture(s) sélectionnée(s) — modifier` : 'Choisir des captures'}
+              <input type="file" accept="image/*" multiple className="hidden" onChange={handleScreenshots} />
+            </label>
+          </div>
+
+          <Field label="Nom de l'application *" name="nom" value={form.nom}
+            onChange={e => setForm({ ...form, nom: e.target.value })} placeholder="ex: UlyShop" />
+          <div>
+            <label className="block text-white/40 text-xs mb-1.5">Description</label>
+            <textarea value={form.description} rows={2} placeholder="Courte description..."
+              onChange={e => setForm({ ...form, description: e.target.value })}
+              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder-white/20 focus:border-violet-500/50 focus:outline-none transition-colors resize-none" />
+          </div>
+          <Field label="URL du site" name="url_site" value={form.url_site}
+            onChange={e => setForm({ ...form, url_site: e.target.value })} placeholder="https://monapp.tn" />
+          <Field label="URL du repo" name="url_repo" value={form.url_repo}
+            onChange={e => setForm({ ...form, url_repo: e.target.value })} placeholder="https://github.com/..." />
+          <Field label="Catégorie" name="categorie" value={form.categorie}
+            onChange={e => setForm({ ...form, categorie: e.target.value })} placeholder="SaaS, E-commerce, IA..." />
+          <Field label="Technologies (séparées par virgule)" name="technologies" value={form.technologies}
+            onChange={e => setForm({ ...form, technologies: e.target.value })} placeholder="React, Node.js, PostgreSQL" />
+
+          <div>
+            <label className="block text-white/40 text-xs mb-1.5">Statut</label>
+            <select value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}
+              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:border-violet-500/50 focus:outline-none transition-colors">
+              <option value="production">Production</option>
+              <option value="beta">Bêta</option>
+              <option value="dev">En développement</option>
+              <option value="archive">Archivé</option>
+            </select>
+          </div>
+
+          <button onClick={handleAdd} disabled={loading || !form.nom}
+            className="w-full py-2.5 bg-indigo-500/20 hover:bg-indigo-500/30 disabled:opacity-40 text-indigo-300 rounded-lg text-sm transition-colors">
+            {loading ? 'Ajout en cours...' : 'Confirmer'}
+          </button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -681,6 +1019,7 @@ export default function DashboardPage() {
     equipe:   'Équipe',
     clients:  'Clients',
     services: 'Services',
+    apps: 'Applications',
   };
 
   return (
@@ -776,6 +1115,8 @@ export default function DashboardPage() {
               {section === 'equipe'   && <VueEquipe />}
               {section === 'clients'  && <VueClients />}
               {section === 'services' && <VueServices />}
+              {section === 'apps' && <VueApps />}
+
             </motion.div>
           </AnimatePresence>
 

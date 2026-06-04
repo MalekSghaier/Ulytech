@@ -4,9 +4,8 @@ const fs = require('fs');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    // Détermine le dossier selon la route appelée
-    const dir = req.originalUrl.includes('clients')
-      ? 'uploads/clients'
+    const dir = req.originalUrl.includes('clients') ? 'uploads/clients'
+      : req.originalUrl.includes('apps') ? 'uploads/apps'
       : 'uploads/team';
 
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

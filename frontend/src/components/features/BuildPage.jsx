@@ -451,7 +451,7 @@ export default function BuildPage() {
                   whileTap={{ scale: 0.98 }}
                   className="inline-flex items-center gap-2 px-6 md:px-8 py-3 bg-white text-darkBg rounded-lg font-medium hover:bg-white/90 transition-all"
                 >
-                  Démarrer un projet
+                  Discutons de votre projet 
                   <FiArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>

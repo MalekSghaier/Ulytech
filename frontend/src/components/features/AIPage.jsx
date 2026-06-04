@@ -423,7 +423,7 @@ export default function AIPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-12 md:py-20 px-4">
+      <section className="py-12 md:py-14 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {stats.map((stat, index) => (
@@ -445,7 +445,7 @@ export default function AIPage() {
       </section>
 
       {/* LLM Model Announcement */}
-      <section className="py-12 md:py-20 px-4 bg-gradient-to-b from-purple-500/5 to-transparent">
+      <section className="py-12 md:py-14 px-4 bg-gradient-to-b from-purple-500/5 to-transparent">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -515,7 +515,7 @@ export default function AIPage() {
       </section>
 
       {/* AI Capabilities */}
-      <section className="py-12 md:py-20 px-4">
+      <section className="py-12 md:py-14 px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -551,7 +551,7 @@ export default function AIPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-12 md:py-20 px-4">
+      <section className="py-12 md:py-14 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
