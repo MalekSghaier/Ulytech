@@ -23,6 +23,7 @@ const ICONS = {
   check:   "M5 13l4 4L19 7",
   trash:   "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16",
   grid:    "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+  chat:    "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z",
 
 };
 
@@ -657,6 +658,7 @@ const NAV = [
   { id: 'clients',   label: 'Clients',  icon: ICONS.clients },
   { id: 'services',  label: 'Services', icon: ICONS.services},
   { id: 'apps', label: 'Applications', icon: ICONS.grid },
+  { id: 'conversations', label: 'Discussions', icon: ICONS.chat },
 
 ];
 
@@ -993,6 +995,185 @@ function VueApps() {
     </div>
   );
 }
+function VueConversations() {
+  const [conversations, setConversations] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [confirmId, setConfirmId] = useState(null);
+  const API = 'http://localhost:5000';
+
+  const fetchConversations = async () => {
+    const res = await fetch(`${API}/api/chat/conversations`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    const data = await res.json();
+    setConversations(Array.isArray(data) ? data : []);
+  };
+
+  const fetchMessages = async (id) => {
+    const res = await fetch(`${API}/api/chat/conversations/${id}/messages`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    const data = await res.json();
+    setMessages(Array.isArray(data) ? data : []);
+  };
+
+  const handleDelete = async () => {
+    await fetch(`${API}/api/chat/conversations/${confirmId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+    setConfirmId(null);
+    if (selected?.id === confirmId) { setSelected(null); setMessages([]); }
+    fetchConversations();
+  };
+
+  useEffect(() => { fetchConversations(); }, []);
+
+  useEffect(() => {
+    if (selected) fetchMessages(selected.id);
+  }, [selected]);
+
+  const formatDate = (d) => new Date(d).toLocaleDateString('fr-TN', {
+    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+  });
+
+  return (
+    <div className="flex gap-5 h-[calc(100vh-180px)]">
+
+      {/* Liste conversations */}
+      <div className="w-72 flex-shrink-0 flex flex-col gap-3 overflow-y-auto pr-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-white/30 text-sm">{conversations.length} discussion{conversations.length > 1 ? 's' : ''}</p>
+        </div>
+
+        {conversations.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-white/20 text-sm">Aucune discussion pour l'instant</p>
+          </div>
+        )}
+
+        {conversations.map((conv, i) => (
+          <motion.div key={conv.id}
+            initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.04 }}
+            onClick={() => setSelected(conv)}
+            className={`group cursor-pointer p-3.5 rounded-xl border transition-all duration-200 ${
+              selected?.id === conv.id
+                ? 'bg-violet-500/10 border-violet-500/30'
+                : 'bg-white/[0.02] border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.04]'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                <Icon d={ICONS.chat} size={13} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white/60 text-xs truncate leading-relaxed">
+                  {conv.premier_message || 'Nouvelle conversation'}
+                </p>
+              </div>
+              <button
+                onClick={e => { e.stopPropagation(); setConfirmId(conv.id); }}
+                className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-rose-400 transition-all flex-shrink-0"
+              >
+                <Icon d={ICONS.trash} size={13} />
+              </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-white/20 text-xs">{formatDate(conv.updated_at)}</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-white/25">
+                {conv.total_messages} msg
+              </span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Détail messages */}
+      <div className="flex-1 flex flex-col bg-white/[0.02] border border-white/[0.06] rounded-2xl overflow-hidden">
+        {!selected ? (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-3">
+                <Icon d={ICONS.chat} size={20} />
+              </div>
+              <p className="text-white/20 text-sm">Sélectionnez une discussion</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+              <div>
+                <p className="text-white/60 text-sm font-medium">
+                  {selected.premier_message?.slice(0, 50) || 'Discussion'}
+                  {selected.premier_message?.length > 50 ? '...' : ''}
+                </p>
+                <p className="text-white/20 text-xs mt-0.5">
+                  {formatDate(selected.created_at)} · {selected.total_messages} messages
+                </p>
+              </div>
+              <button onClick={() => setConfirmId(selected.id)}
+                className="text-white/20 hover:text-rose-400 transition-colors">
+                <Icon d={ICONS.trash} size={15} />
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              {messages.map((msg, i) => (
+                <motion.div key={msg.id}
+                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  {msg.role === 'assistant' && (
+                    <div className="w-6 h-6 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">
+                      <Icon d={ICONS.user} size={12} />
+                    </div>
+                  )}
+                  <div className={`max-w-[75%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                    msg.role === 'user'
+                      ? 'bg-violet-600/70 text-white rounded-br-sm'
+                      : 'bg-white/[0.06] text-white/80 rounded-bl-sm border border-white/[0.05]'
+                  }`}>
+                    {msg.content}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Modal suppression */}
+      <Modal open={!!confirmId} onClose={() => setConfirmId(null)} title="Supprimer la discussion">
+        <div className="space-y-5">
+          <div className="flex items-start gap-3 p-4 bg-rose-500/5 border border-rose-500/15 rounded-xl">
+            <div className="w-8 h-8 rounded-lg bg-rose-500/15 flex items-center justify-center flex-shrink-0">
+              <Icon d={ICONS.trash} size={15} />
+            </div>
+            <div>
+              <p className="text-white text-sm font-medium mb-1">Supprimer cette discussion ?</p>
+              <p className="text-white/40 text-xs">Tous les messages seront supprimés définitivement.</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => setConfirmId(null)}
+              className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg text-sm transition-colors">
+              Annuler
+            </button>
+            <button onClick={handleDelete}
+              className="flex-1 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-sm transition-colors">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -1015,15 +1196,17 @@ export default function DashboardPage() {
   if (!user) return null;
 
   const SECTION_TITLES = {
-    apercu:   `Bonjour, ${user.nom} 👋`,
-    equipe:   'Équipe',
-    clients:  'Clients',
-    services: 'Services',
-    apps: 'Applications',
+    apercu:        `Bonjour, ${user.nom} 👋`,
+    equipe:        'Équipe',
+    clients:       'Clients',
+    services:      'Services',
+    apps:          'Applications',
+    conversations: 'Discussions',
+
   };
 
-  return (
-    <div className="min-h-screen bg-darkBg flex" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+return (
+    <div className="min-h-screen bg-darkBg flex relative" style={{ fontFamily: "'DM Sans', sans-serif" }}>
 
       {/* ── Overlay mobile ── */}
       {sidebarOpen && (
@@ -1033,16 +1216,16 @@ export default function DashboardPage() {
 
       {/* ══════════════ SIDEBAR ══════════════ */}
       <aside className={`
-        fixed top-0 left-0 h-screen w-60 bg-black/40 backdrop-blur-sm border-r border-white/[0.08]
+        fixed top-0 left-0 h-screen w-60 bg-[#08080d]/95 backdrop-blur-md border-r border-white/[0.10]
         flex flex-col z-30 transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:sticky lg:top-0 lg:z-auto
       `}>
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/[0.06]">
+        <div className="px-5 py-5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2.5">
             <img src="/logoulytech.png" alt="UlyTech" className="h-6 w-auto" />
-            <span className="text-white/60 text-xs font-medium tracking-wide">Dashboard</span>
+            <span className="text-white/80 text-xs font-medium tracking-wide">Dashboard</span>
           </div>
         </div>
 
@@ -1055,8 +1238,8 @@ export default function DashboardPage() {
                 onClick={() => { setSection(item.id); setSidebarOpen(false); }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all text-left
                   ${active
-                    ? 'bg-violet-500/15 text-violet-300'
-                    : 'text-white/30 hover:text-white/60 hover:bg-white/[0.04]'
+                    ? 'bg-violet-500/20 text-violet-200'
+                    : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
                   }`}
               >
                 <Icon d={item.icon} size={16} />
@@ -1067,18 +1250,18 @@ export default function DashboardPage() {
         </nav>
 
         {/* User + Logout */}
-        <div className="px-3 py-4 border-t border-white/[0.06] space-y-1">
+        <div className="px-3 py-4 border-t border-white/[0.08] space-y-1">
           <div className="flex items-center gap-3 px-3 py-2.5">
             <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-300 text-xs font-medium">
               {user.nom?.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white/60 text-xs font-medium truncate">{user.nom}</p>
-              <p className="text-white/20 text-xs truncate">{user.email}</p>
+              <p className="text-white/90 text-xs font-medium truncate">{user.nom}</p>
+              <p className="text-white/50 text-xs truncate">{user.email}</p>
             </div>
           </div>
           <button onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/20 hover:text-rose-400 hover:bg-rose-500/5 transition-all">
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:text-rose-400 hover:bg-rose-500/5 transition-all">
             <Icon d={ICONS.logout} size={16} />
             Déconnexion
           </button>
@@ -1086,17 +1269,17 @@ export default function DashboardPage() {
       </aside>
 
       {/* ══════════════ MAIN ══════════════ */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <main className="flex-1 flex flex-col min-w-0 min-h-screen bg-[#08080d]/80 backdrop-blur-sm">
         {/* Topbar */}
-        <header className="h-14 border-b border-white/[0.08] flex items-center px-5 lg:px-8 gap-4 flex-shrink-0 bg-black/20">
-          <button className="lg:hidden text-white/30 hover:text-white transition-colors"
+        <header className="h-14 border-b border-white/[0.08] flex items-center px-5 lg:px-8 gap-4 flex-shrink-0 bg-[#08080d]/90">
+          <button className="lg:hidden text-white/60 hover:text-white transition-colors"
             onClick={() => setSidebarOpen(true)}>
             <Icon d={ICONS.menu} size={20} />
           </button>
           <h1 className="text-white font-medium text-base flex-1">
             {SECTION_TITLES[section]}
           </h1>
-          <div className="text-white/20 text-xs hidden sm:block">
+          <div className="text-white/50 text-xs hidden sm:block">
             {new Date().toLocaleDateString('fr-TN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
         </header>
@@ -1111,16 +1294,14 @@ export default function DashboardPage() {
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.18 }}
             >
-              {section === 'apercu'   && <VueApercu user={user} />}
-              {section === 'equipe'   && <VueEquipe />}
-              {section === 'clients'  && <VueClients />}
-              {section === 'services' && <VueServices />}
-              {section === 'apps' && <VueApps />}
-
+              {section === 'apercu'        && <VueApercu user={user} />}
+              {section === 'equipe'        && <VueEquipe />}
+              {section === 'clients'       && <VueClients />}
+              {section === 'services'      && <VueServices />}
+              {section === 'apps'          && <VueApps />}
+              {section === 'conversations' && <VueConversations />}
             </motion.div>
           </AnimatePresence>
-
-          
         </div>
       </main>
     </div>

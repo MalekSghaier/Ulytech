@@ -7,6 +7,8 @@ const teamRoutes = require('./routes/teamRoutes');
 const clientRoutes = require('./routes/clientRoutes');
 const appRoutes = require('./routes/appRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+
 
 
 const path = require('path');
@@ -22,6 +24,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/clients', clientRoutes);
 app.use('/api/apps', appRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/chat', chatRoutes);
+
 
 
 

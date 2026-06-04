@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function CTA() {
+  const navigate = useNavigate();
+
   return (
-    <section className="-mt-24 lg:mt-0 lg:py-20 relative overflow-hidden">
+    <section className="py-12 lg:py-20 relative overflow-hidden">
       {/* Background Chart/Plot */}
       <div className="absolute inset-0 z-0">
         <svg className="absolute inset-0 w-full h-full opacity-30 blur-sm" viewBox="0 0 1200 600" preserveAspectRatio="none">
@@ -92,15 +94,18 @@ export default function CTA() {
             <p className="text-white/50 leading-relaxed mb-8">
               Nous sommes tous des créateurs dans l âme et nous nous soucions profondément de la qualité de notre travail, jusqu au moindre détail. Aujourd hui, des milliers d équipes à travers le monde utilisent nos solutions pour construire leurs produits.
             </p>
-            <Link to="/contact">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  navigate('/contact');
+                }}
                 className="px-6 py-3 bg-white text-darkBg rounded-lg font-medium text-sm hover:bg-white/90 transition-all"
               >
                 Commencer avec nous
               </motion.button>
-            </Link>
+            
           </motion.div>
         </div>
       </div>

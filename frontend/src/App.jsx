@@ -10,6 +10,8 @@ import About from './components/About';
 import Footer from './components/Footer';
 import Portfolio from './components/Portfolio';
 import CookieConsent from './components/CookieConsent';
+import Chatbot from './components/Chatbot';
+import Background from './components/Background';
 import './styles/index.css';
 
 // Lazy load pages
@@ -40,7 +42,9 @@ const PageLoader = () => (
 function App() {
   return (
     <Router>
+      <Background /> 
       <CookieConsent />
+      <Chatbot />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={
