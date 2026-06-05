@@ -5,7 +5,11 @@ const API = 'http://localhost:5000';
 
 const MESSAGE_INITIAL = {
   role: 'assistant',
-  content: 'Bonjour ! Je suis Uly, l\'assistant d\'UlyTech 👋 Dites-moi, quel défi digital rencontrez-vous en ce moment ?',
+  content: `Bonjour ! Je suis Uly, l'assistant d'UlyTech 👋
+
+Nous sommes basés à **Kairouan, Tunisie** et joignables au **+216 99 613 615**.
+
+Pour mieux vous accompagner, dites-moi : quel est le nom de votre société ou projet, et dans quel domaine activez-vous ?`,
 };
 
 export default function Chatbot() {
