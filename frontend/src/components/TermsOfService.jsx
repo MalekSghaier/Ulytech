@@ -149,8 +149,8 @@ export default function TermsOfService() {
                 </p>
                 <div className="bg-white/[0.05] border border-white/[0.08] rounded-xl p-6 mt-4">
                   <p className="text-white font-medium mb-2">Ulytech</p>
-                  <p className="text-white/60 text-sm">Email : kaissafouene@ulytech.tn</p>
-                  <p className="text-white/60 text-sm">Téléphone : +216 99 613 615</p>
+                  <p className="text-white/60 text-sm">Email : contact@ulytechai.com</p>
+                  <p className="text-white/60 text-sm">Téléphone : +216 95 556 553</p>
                   <p className="text-white/60 text-sm">Adresse : Tunisie</p>
                 </div>
               </section>

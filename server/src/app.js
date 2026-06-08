@@ -8,6 +8,8 @@ const clientRoutes = require('./routes/clientRoutes');
 const appRoutes = require('./routes/appRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+
 
 
 
@@ -25,6 +27,8 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/apps', appRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/analytics', analyticsRoutes);
+
 
 
 

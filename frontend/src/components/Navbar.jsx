@@ -24,7 +24,7 @@ export default function Navbar() {
     { name: 'Produit', href: '/', isRoute: true, hasDropdown: true },
     { name: 'Services', href: '#services', isRoute: false },
     { name: 'À Propos', href: '#about', isRoute: false },
-    { name: 'Contact', href: '/contact', isRoute: true }
+    { name: 'Contact', href: '#contact', isRoute: false }
   ];
 
   const coreFeatures = [

@@ -308,11 +308,11 @@ export default function PrivacyPolicy() {
                   <div className="space-y-3 text-white/70">
                     <p className="flex items-center gap-3">
                       <span className="text-[#8B5CF6]">📧</span>
-                      <span>Email : kaissafouene@ulytech.tn</span>
+                      <span>Email : contact@ulytechai.com</span>
                     </p>
                     <p className="flex items-center gap-3">
                       <span className="text-[#8B5CF6]">📞</span>
-                      <span>Téléphone : +216 99 613 615</span>
+                      <span>Téléphone : +216 95 556 553</span>
                     </p>
                     <p className="flex items-center gap-3">
                       <span className="text-[#8B5CF6]">📍</span>

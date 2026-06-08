@@ -39,8 +39,8 @@ Déployé sur Vercel: [ulytech.vercel.app](https://ulytech.vercel.app)
 
 ## 📧 Contact
 
-- Email: kaissafouene@ulytech.tn
-- Tél: +216 99 613 615
+- Email: contact@ulytechai.com
+- Tél: +216 95 556 553
 - Localisation: Kairouan, Tunisie
 
 ---

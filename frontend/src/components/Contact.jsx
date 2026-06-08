@@ -43,13 +43,13 @@ export default function Contact() {
     {
       icon: FiMail,
       title: 'Email',
-      value: 'kaissafouene@ulytech.tn',
-      link: 'mailto:kaissafouene@ulytech.tn'
+      value: 'contact@ulytechai.com',
+      link: 'mailto:contact@ulytechai.com'
     },
     {
       icon: FiPhone,
       title: 'Téléphone',
-      value: '+216 99 613 615',
+      value: '+216 95 556 553',
       link: 'tel:+21699613615'
     },
     {

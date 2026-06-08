@@ -7,7 +7,7 @@ const MESSAGE_INITIAL = {
   role: 'assistant',
   content: `Bonjour ! Je suis Uly, l'assistant d'UlyTech 👋
 
-Nous sommes basés à **Kairouan, Tunisie** et joignables au **+216 99 613 615**.
+Nous sommes basés à **Kairouan, Tunisie** et joignables au **+216 95 556 553**.
 
 Pour mieux vous accompagner, dites-moi : quel est le nom de votre société ou projet, et dans quel domaine activez-vous ?`,
 };
@@ -19,12 +19,8 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState(true);
   const sessionId = useRef(
-    localStorage.getItem('chat_session') || (() => {
-      const id = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-      localStorage.setItem('chat_session', id);
-      return id;
-    })()
-  );
+    'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2)
+  )
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -63,7 +59,7 @@ export default function Chatbot() {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Désolé, une erreur est survenue. Contactez-nous directement à kaissafouene@ulytech.tn',
+        content: 'Désolé, une erreur est survenue. Contactez-nous directement à contact@ulytechai.com',
       }]);
     } finally {
       setLoading(false);

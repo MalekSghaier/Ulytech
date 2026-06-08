@@ -11,7 +11,10 @@ import Footer from './components/Footer';
 import Portfolio from './components/Portfolio';
 import CookieConsent from './components/CookieConsent';
 import Chatbot from './components/Chatbot';
+import Contact from './components/Contact';
 import Background from './components/Background';
+import useTracker from './hooks/useTracker';
+
 import './styles/index.css';
 
 // Lazy load pages
@@ -39,9 +42,15 @@ const PageLoader = () => (
   </div>
 );
 
+function AppContent() {
+  useTracker();
+  return null;
+}
+
 function App() {
   return (
     <Router>
+      <AppContent />
       <Background /> 
       <CookieConsent />
       <Chatbot />
@@ -57,6 +66,7 @@ function App() {
               <AISection />
               <Portfolio />
               <About />
+              <Contact />
               <Footer />
               
             </div>

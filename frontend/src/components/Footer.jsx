@@ -37,13 +37,13 @@ export default function Footer() {
             
             <ul className="space-y-2 mb-6">
               <li>
-                <a href="mailto:kaissafouene@ulytech.tn" className="text-white/40 hover:text-white transition-colors text-sm">
-                  kaissafouene@ulytech.tn
+                <a href="mailto:contact@ulytechai.com" className="text-white/40 hover:text-white transition-colors text-sm">
+                  contact@ulytechai.com
                 </a>
               </li>
               <li>
                 <a href="tel:+21699613615" className="text-white/40 hover:text-white transition-colors text-sm">
-                  +216 99 613 615
+                  +216 95 556 553
                 </a>
               </li>
               <li className="text-white/40 text-sm">
