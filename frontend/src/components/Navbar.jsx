@@ -171,21 +171,14 @@ export default function Navbar() {
 
           {/* Right Side Buttons */}
           <div className="hidden md:flex items-center space-x-3 ml-auto mr-[10%]">
-            <Link
-              to="/login"
-              className="flex items-center space-x-1.5 text-white/60 hover:text-white transition-colors duration-150 text-[15px] font-normal px-3 py-1.5"
-            >
-              <FiLogIn className="w-[15px] h-[15px]" />
-              <span>Se connecter</span>
-            </Link>
-            <Link to="/register">
+            <Link to="/login">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center space-x-1.5 px-4 py-1.5 bg-white text-darkBg rounded-md font-medium text-[15px] hover:bg-white/90 transition-all duration-150"
               >
-                <FiUserPlus className="w-[15px] h-[15px]" />
-                <span>S inscrire</span>
+                <FiLogIn className="w-[15px] h-[15px]" />
+                <span>Se connecter</span>
               </motion.button>
             </Link>
           </div>

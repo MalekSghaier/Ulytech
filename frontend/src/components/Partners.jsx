@@ -8,7 +8,7 @@ export default function Partners() {
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
-    fetch(`${API}/api/clients`)
+    fetch(`${API}/clients`)
       .then(res => res.json())
       .then(data => setClients(Array.isArray(data) ? data : []))
       .catch(err => console.error('Erreur clients:', err));
@@ -146,7 +146,7 @@ function ClientCard({ client }) {
       }}>
         {client.logo ? (
           <img
-            src={`${API}${client.logo}`}
+            src={`${API.replace('/api', '')}${client.logo}`}
             alt={client.nom}
             style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
           />

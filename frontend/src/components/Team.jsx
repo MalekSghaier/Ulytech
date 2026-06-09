@@ -17,7 +17,7 @@ export default function Team() {
 
   const fetchTeam = async () => {
     try {
-      const res = await fetch(`${API}/api/team`);
+      const res = await fetch(`${API}/team`);
       const data = await res.json();
       setMembers(data);
     } catch (err) {
@@ -46,7 +46,7 @@ export default function Team() {
     if (imageFile) formData.append('image', imageFile);
 
     try {
-      await fetch(`${API}/api/team`, {
+      await fetch(`${API}/team`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         body: formData,
@@ -66,7 +66,7 @@ export default function Team() {
   const handleDelete = async (id, e) => {
     e.stopPropagation();
     if (!window.confirm('Supprimer ce membre ?')) return;
-    await fetch(`${API}/api/team/${id}`, {
+    await fetch(`${API}/team/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
@@ -107,7 +107,7 @@ export default function Team() {
                 {/* Photo */}
                 {member.image ? (
                   <img
-                    src={`${API}${member.image}`}
+                    src={`${API.replace('/api', '')}${member.image}`}
                     alt={member.nom}
                     onClick={() => setSelected(member)}
                     className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover grayscale cursor-pointer hover:scale-105 transition-transform"
@@ -186,7 +186,7 @@ export default function Team() {
                 </button>
                 <div className="flex flex-col items-center text-center">
                   {selected.image ? (
-                    <img src={`${API}${selected.image}`} alt={selected.nom}
+                    <img src={`${API.replace('/api', '')}${selected.image}`} alt={selected.nom}
                       className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover grayscale mb-5" />
                   ) : (
                     <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg bg-white/5 flex items-center justify-center mb-5">

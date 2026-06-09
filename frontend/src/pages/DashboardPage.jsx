@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
+
 
 const Icon = ({ d, size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -202,11 +203,11 @@ function VueApercu({ user }) {
   useEffect(() => {
     const headers = { Authorization: `Bearer ${token}` };
     Promise.all([
-      fetch(`${API}/api/analytics/stats`, { headers }).then(r => r.json()),
-      fetch(`${API}/api/team`).then(r => r.json()),
-      fetch(`${API}/api/clients`).then(r => r.json()),
-      fetch(`${API}/api/apps`).then(r => r.json()),
-      fetch(`${API}/api/chat/conversations`, { headers }).then(r => r.json()),
+      fetch(`${API}/analytics/stats`, { headers }).then(r => r.json()),
+      fetch(`${API}/team`).then(r => r.json()),
+      fetch(`${API}/clients`).then(r => r.json()),
+      fetch(`${API}/apps`).then(r => r.json()),
+      fetch(`${API}/chat/conversations`, { headers }).then(r => r.json()),
     ]).then(([analytics, team, clients, apps, convs]) => {
       setStats(analytics);
       setCounts({
@@ -431,7 +432,7 @@ function VueEquipe() {
   const [confirmId, setConfirmId] = useState(null);
 
   const fetchTeam = async () => {
-    try { const res = await fetch(`${API}/api/team`); const data = await res.json(); setItems(Array.isArray(data) ? data : []); } catch (err) { console.error(err); }
+    try { const res = await fetch(`${API}/team`); const data = await res.json(); setItems(Array.isArray(data) ? data : []); } catch (err) { console.error(err); }
   };
   useEffect(() => { fetchTeam(); }, []);
 
@@ -441,11 +442,11 @@ function VueEquipe() {
     const fd = new FormData();
     fd.append('nom', form.nom); fd.append('role', form.role); fd.append('linkedin', form.linkedin); fd.append('bio', form.bio);
     if (imageFile) fd.append('image', imageFile);
-    await fetch(`${API}/api/team`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
+    await fetch(`${API}/team`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
     setForm({ nom: '', role: '', linkedin: '', bio: '' }); setImageFile(null); setPreview(null); setModal(false); setLoading(false); fetchTeam();
   };
   const handleDelete = async () => {
-    await fetch(`${API}/api/team/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    await fetch(`${API}/team/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
     setConfirmId(null); fetchTeam();
   };
 
@@ -468,7 +469,7 @@ function VueEquipe() {
                 <Icon d={ICONS.trash} size={13} />
               </button>
               <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center mb-4 overflow-hidden flex-shrink-0 ${colors.bg} ${colors.ring}`}>
-                {m.image ? <img src={`${API}${m.image}`} alt={m.nom} className="w-full h-full object-cover grayscale" /> : <span className={`text-base font-medium ${colors.text}`}>{initiales}</span>}
+                {m.image ? <img src={`${API.replace('/api', '')}${m.image}`} alt={m.nom} className="w-full h-full object-cover grayscale" /> : <span className={`text-base font-medium ${colors.text}`}>{initiales}</span>}
               </div>
               <p className="text-white text-sm font-medium leading-tight mb-1 w-full truncate px-1">{m.nom}</p>
               <p className="text-white/50 text-xs leading-snug mb-3 line-clamp-2">{m.role}</p>
@@ -537,7 +538,7 @@ function VueClients() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchClients = async () => { try { const res = await fetch(`${API}/api/clients`); const data = await res.json(); setItems(Array.isArray(data) ? data : []); } catch (err) { console.error(err); } };
+  const fetchClients = async () => { try { const res = await fetch(`${API}/clients`); const data = await res.json(); setItems(Array.isArray(data) ? data : []); } catch (err) { console.error(err); } };
   useEffect(() => { fetchClients(); }, []);
 
   const handleLogoChange = (e) => { const file = e.target.files[0]; if (!file) return; setLogoFile(file); setPreview(URL.createObjectURL(file)); };
@@ -546,11 +547,11 @@ function VueClients() {
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
     if (logoFile) fd.append('logo', logoFile);
-    await fetch(`${API}/api/clients`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
+    await fetch(`${API}/clients`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
     setForm({ nom: '', contact: '', email: '', ville: '', site_web: '' }); setLogoFile(null); setPreview(null); setModal(false); setLoading(false); fetchClients();
   };
   const handleDelete = async () => {
-    await fetch(`${API}/api/clients/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    await fetch(`${API}/clients/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
     setConfirmId(null); fetchClients();
   };
 
@@ -568,7 +569,7 @@ function VueClients() {
               className="relative group bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] hover:border-white/[0.16] rounded-2xl p-5 flex flex-col items-center text-center transition-all duration-200">
               <button onClick={() => setConfirmId(c.id)} className="absolute top-3 right-3 w-7 h-7 rounded-lg hover:bg-rose-500/20 text-white/0 group-hover:text-rose-400 transition-all flex items-center justify-center"><Icon d={ICONS.trash} size={13} /></button>
               <div className="w-14 h-14 flex items-center justify-center mb-4 overflow-hidden flex-shrink-0">
-                {c.logo ? <img src={`${API}${c.logo}`} alt={c.nom} className="w-14 h-14 object-contain" /> : <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-base font-medium ${colors.bg} ${colors.text}`}>{c.nom.slice(0, 2).toUpperCase()}</div>}
+                {c.logo ? <img src={`${API.replace('/api', '')}${c.logo}`} alt={c.nom} className="w-14 h-14 object-contain" /> : <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-base font-medium ${colors.bg} ${colors.text}`}>{c.nom.slice(0, 2).toUpperCase()}</div>}
               </div>
               <p className="text-white text-sm font-medium leading-tight mb-1 w-full truncate px-1">{c.nom}</p>
               {c.ville && <p className="text-white/40 text-xs mb-2">{c.ville}</p>}
@@ -675,7 +676,7 @@ function VueApps() {
   const [previews, setPreviews] = useState([]);
   const [form, setForm] = useState({ nom: '', description: '', url_site: '', url_repo: '', categorie: '', technologies: '', statut: 'production' });
 
-  const fetchApps = async () => { try { const res = await fetch(`${API}/api/apps`); const data = await res.json(); setApps(Array.isArray(data) ? data : []); } catch (err) { console.error(err); } };
+  const fetchApps = async () => { try { const res = await fetch(`${API}/apps`); const data = await res.json(); setApps(Array.isArray(data) ? data : []); } catch (err) { console.error(err); } };
   useEffect(() => { fetchApps(); }, []);
 
   const handleScreenshots = (e) => { const files = Array.from(e.target.files).slice(0, 10); setScreenshotFiles(files); setPreviews(files.map(f => URL.createObjectURL(f))); };
@@ -684,12 +685,12 @@ function VueApps() {
     const fd = new FormData();
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
     screenshotFiles.forEach(f => fd.append('screenshots', f));
-    await fetch(`${API}/api/apps`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
+    await fetch(`${API}/apps`, { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }, body: fd });
     setForm({ nom: '', description: '', url_site: '', url_repo: '', categorie: '', technologies: '', statut: 'production' });
     setScreenshotFiles([]); setPreviews([]); setModal(false); setLoading(false); fetchApps();
   };
   const handleDelete = async () => {
-    await fetch(`${API}/api/apps/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    await fetch(`${API}/apps/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
     setConfirmId(null); if (selected?.id === confirmId) setSelected(null); fetchApps();
   };
 
@@ -722,7 +723,7 @@ function VueApps() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {app.screenshots.map((s, i) => (
                   <motion.div key={s.id} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.08 }} className="rounded-xl overflow-hidden border border-white/[0.07] group">
-                    <img src={`${API}${s.image}`} alt={`capture ${i + 1}`} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+                    <img src={`${API.replace('/api', '')}${s.image}`} alt={`capture ${i + 1}`} className="w-full h-48 object-cover object-top group-hover:scale-105 transition-transform duration-500" />
                   </motion.div>
                 ))}
               </div>
@@ -759,7 +760,7 @@ function VueApps() {
               onClick={() => setSelected(app)}
               className="group cursor-pointer bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-white/[0.16] rounded-2xl overflow-hidden transition-all duration-200">
               <div className="h-40 bg-white/[0.02] overflow-hidden relative">
-                {cover ? <img src={`${API}${cover.image}`} alt={app.nom} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center text-white/10"><Icon d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" size={32} /></div>}
+                {cover ? <img src={`${API.replace('/api', '')}${cover.image}`} alt={app.nom} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center text-white/10"><Icon d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" size={32} /></div>}
                 <div className="absolute top-3 right-3"><span className={`text-xs px-2 py-0.5 rounded-full font-medium backdrop-blur-sm ${statut.bg} ${statut.text}`}>{statut.label}</span></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4"><span className="text-white text-xs">Voir les détails →</span></div>
               </div>
@@ -815,9 +816,9 @@ function VueConversations() {
   const [messages, setMessages] = useState([]);
   const [confirmId, setConfirmId] = useState(null);
 
-  const fetchConversations = async () => { const res = await fetch(`${API}/api/chat/conversations`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setConversations(Array.isArray(data) ? data : []); };
-  const fetchMessages = async (id) => { const res = await fetch(`${API}/api/chat/conversations/${id}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setMessages(Array.isArray(data) ? data : []); };
-  const handleDelete = async () => { await fetch(`${API}/api/chat/conversations/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); setConfirmId(null); if (selected?.id === confirmId) { setSelected(null); setMessages([]); } fetchConversations(); };
+  const fetchConversations = async () => { const res = await fetch(`${API}/chat/conversations`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setConversations(Array.isArray(data) ? data : []); };
+  const fetchMessages = async (id) => { const res = await fetch(`${API}/chat/conversations/${id}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setMessages(Array.isArray(data) ? data : []); };
+  const handleDelete = async () => { await fetch(`${API}/chat/conversations/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); setConfirmId(null); if (selected?.id === confirmId) { setSelected(null); setMessages([]); } fetchConversations(); };
 
   useEffect(() => { fetchConversations(); }, []);
   useEffect(() => { if (selected) fetchMessages(selected.id); }, [selected]);

@@ -92,7 +92,7 @@ export default function About() {
 
 
   useEffect(() => {
-    fetch(`${API}/api/team`)
+    fetch(`${API}/team`)
       .then(res => res.json())
       .then(data => setTeamMembers(Array.isArray(data) ? data : []))
       .catch(err => console.error('Erreur équipe:', err));
@@ -184,7 +184,7 @@ export default function About() {
                 className="flex flex-col items-center">
                 <div className="relative mb-4 sm:mb-5 group">
                   {member.image ? (
-                    <img src={`${API}${member.image}`} alt={member.nom}
+                    <img src={`${API.replace('/api', '')}${member.image}`} alt={member.nom}
                       onClick={() => setSelectedMember(member)}
                       className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover grayscale cursor-pointer hover:scale-105 transition-transform" />
                   ) : (
@@ -221,7 +221,7 @@ export default function About() {
                   </button>
                   <div className="flex flex-col items-center text-center">
                     {selectedMember.image ? (
-                      <img src={`${API}${selectedMember.image}`} alt={selectedMember.nom}
+                      <img src={`${API.replace('/api', '')}${selectedMember.image}`} alt={selectedMember.nom}
                         className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover grayscale mb-4 sm:mb-6" />
                     ) : (
                       <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg bg-white/5 flex items-center justify-center mb-4 sm:mb-6">

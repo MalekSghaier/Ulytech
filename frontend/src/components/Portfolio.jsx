@@ -18,7 +18,7 @@ export default function Portfolio() {
   const [filter, setFilter] = useState('Tous');
 
   useEffect(() => {
-    fetch(`${API}/api/apps`)
+    fetch(`${API}/apps`)
       .then(res => res.json())
       .then(data => setApps(Array.isArray(data) ? data : []))
       .catch(err => console.error(err));
@@ -88,7 +88,7 @@ export default function Portfolio() {
                   {/* Image cover */}
                   <div className="relative h-56 overflow-hidden bg-white/[0.03]">
                     {cover ? (
-                      <img src={`${API}${cover.image}`} alt={app.nom}
+                      <img src={`${API.replace('/api', '')}${cover.image}`} alt={app.nom}
                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -200,7 +200,7 @@ export default function Portfolio() {
                   <AnimatePresence mode="wait">
                     <motion.img
                       key={imgIndex}
-                      src={`${API}${selected.screenshots[imgIndex].image}`}
+                      src={`${API.replace('/api', '')}${selected.screenshots[imgIndex].image}`}
                       alt=""
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
