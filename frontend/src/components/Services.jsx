@@ -86,7 +86,7 @@ export default function Services() {
       {/* Mobile Background Image */}
       <div className="lg:hidden absolute inset-0 z-0">
         <img
-          src="/issuesbanding.png"
+          src="/issuesbanding.webp"
           alt="Services Background"
           className="w-full h-full object-cover opacity-20 mix-blend-screen"
         />
@@ -165,13 +165,6 @@ export default function Services() {
               ))}
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 bg-white text-darkBg rounded-lg font-semibold text-sm hover:bg-white/90 transition-all"
-            >
-              Découvrir tous nos services
-            </motion.button>
           </motion.div>
 
           {/* Right: Image - Krea Style - Hidden on Mobile */}
@@ -202,7 +195,7 @@ export default function Services() {
             >
               {/* Main image with blend mode */}
               <img
-                src="/issuesbanding.png"
+                src="/issuesbanding.webp"
                 alt="Services Dashboard"
                 className="
                   w-full 

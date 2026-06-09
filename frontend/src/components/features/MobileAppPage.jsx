@@ -525,7 +525,7 @@ export default function MobileAppPage() {
                     {/* Logo in Center */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-lg p-1 shadow-lg">
                       <img 
-                        src="/logoulytech.png" 
+                        src="/logoulytech.webp" 
                         alt="Ulytech Logo" 
                         className="w-full h-full object-contain"
                       />

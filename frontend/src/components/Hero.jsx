@@ -83,7 +83,7 @@ export default function Hero() {
 
       {/* Mobile background */}
       <div className="lg:hidden absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/two-factor-authentication-confirmation.jpg)' }} />
+        style={{ backgroundImage: 'url(/two-factor-authentication-confirmation.webp)' }} />
       <div className="lg:hidden absolute inset-0 bg-darkBg/60" />
 
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-12">

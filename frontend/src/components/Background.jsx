@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
 
 export default function Background() {
-  const points = [...Array(20)].map((_, i) => ({
+  const points = [...Array(10)].map((_, i) => ({
     id: i,
     left: (i * 37 + 11) % 100,
     top:  (i * 53 + 17) % 100,
-    duration: 12 + (i % 8) * 3,   // entre 12s et 36s
+    duration: 12 + (i % 4) * 4,   
     delay: (i * 0.8) % 6,
-    dx: ((i * 23 + 7) % 40) - 20, // déplacement x entre -20 et +20
-    dy: ((i * 31 + 13) % 40) - 20, // déplacement y entre -20 et +20
+    dx: ((i * 23 + 7) % 40) - 20, 
+    dy: ((i * 31 + 13) % 40) - 20, 
   }));
 
   return (
@@ -27,10 +27,9 @@ export default function Background() {
           className="absolute w-1.5 h-1.5 bg-violet/40 rounded-full"
           style={{ left: `${p.left}%`, top: `${p.top}%` }}
           animate={{
-            x: [0, p.dx, p.dx * 0.5, -p.dx * 0.3, 0],
-            y: [0, p.dy * 0.5, p.dy, p.dy * 0.3, 0],
-            opacity: [0.2, 0.6, 0.4, 0.7, 0.2],
-            scale: [1, 1.3, 0.8, 1.2, 1],
+            x: [0, p.dx, 0],        
+            y: [0, p.dy, 0],        
+            opacity: [0.2, 0.5, 0.2],
           }}
           transition={{
             duration: p.duration,

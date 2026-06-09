@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiLinkedin, FiX, FiPlus, FiTrash2 } from 'react-icons/fi';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
+;
 
 export default function Team() {
   const [members, setMembers] = useState([]);

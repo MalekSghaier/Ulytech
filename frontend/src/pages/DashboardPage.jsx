@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const Icon = ({ d, size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -928,7 +928,7 @@ export default function DashboardPage() {
         `}>
         <div className="px-5 py-5 border-b border-white/[0.08] flex-shrink-0">
           <div className="flex items-center gap-2.5">
-            <img src="/logoulytech.png" alt="UlyTech" className="h-6 w-auto" />
+            <img src="/logoulytech.webp" alt="UlyTech" className="h-6 w-auto" />
             <span className="text-white/80 text-xs font-medium tracking-wide">Dashboard</span>
           </div>
         </div>

@@ -15,6 +15,7 @@ import Contact from './components/Contact';
 import Background from './components/Background';
 import useTracker from './hooks/useTracker';
 
+
 import './styles/index.css';
 
 // Lazy load pages
@@ -33,6 +34,9 @@ const CybersecurityPage = lazy(() => import('./components/features/Cybersecurity
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+
 
 
 // Loading component
@@ -86,6 +90,8 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         </Routes>
       </Suspense>
     </Router>

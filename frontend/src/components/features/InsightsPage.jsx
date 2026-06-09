@@ -166,7 +166,7 @@ export default function InsightsPage() {
                 transition={{ delay: 0.4 }}
                 className="rounded-2xl overflow-hidden border border-white/[0.08] shadow-2xl"
               >
-                <img src="/1rp.png" alt="Interface de rapprochement bancaire" className="w-full h-auto" />
+                <img src="/1rp.webp" alt="Interface de rapprochement bancaire" className="w-full h-auto" />
               </motion.div>
 
               {/* Screenshot 2 */}
@@ -176,7 +176,7 @@ export default function InsightsPage() {
                 transition={{ delay: 0.5 }}
                 className="rounded-2xl overflow-hidden border border-white/[0.08] shadow-2xl"
               >
-                <img src="/2rp.png" alt="Tableau de bord analytique" className="w-full h-auto" />
+                <img src="/2rp.webp" alt="Tableau de bord analytique" className="w-full h-auto" />
               </motion.div>
 
               {/* Screenshot 3 */}
@@ -186,7 +186,7 @@ export default function InsightsPage() {
                 transition={{ delay: 0.6 }}
                 className="rounded-2xl overflow-hidden border border-white/[0.08] shadow-2xl"
               >
-                <img src="/3rp.png" alt="Rapports détaillés" className="w-full h-auto" />
+                <img src="/3rp.webp" alt="Rapports détaillés" className="w-full h-auto" />
               </motion.div>
             </div>
           </motion.div>

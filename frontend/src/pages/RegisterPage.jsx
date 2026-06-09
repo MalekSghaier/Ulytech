@@ -58,7 +58,7 @@ const handleSubmit = async (e) => {
       >
         {/* Logo */}
         <Link to="/" className="flex justify-center mb-2">
-          <img src="/logoulytech.png" alt="UlyTech Logo" className="h-8 w-auto" />
+          <img src="/logoulytech.webp" alt="UlyTech Logo" className="h-8 w-auto" />
         </Link>
 
         {/* Register Form */}

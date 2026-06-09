@@ -88,7 +88,8 @@ function CounterCard({ stat, delay }) {
 export default function About() {
   const [selectedMember, setSelectedMember] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
-  const API = 'http://localhost:5000';
+  const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
+
 
   useEffect(() => {
     fetch(`${API}/api/team`)
@@ -172,9 +173,9 @@ export default function About() {
         {/* Équipe */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} className="mb-20">
-          <h3 className="text-2xl font-medium text-center mb-16 tracking-tight text-white">
+          <h2 className="text-2xl font-medium text-center mb-16 tracking-tight text-white">
             Notre <span className="text-purple-400">Équipe</span>
-          </h3>
+          </h2>
           <div className="flex flex-wrap justify-center gap-x-12 sm:gap-x-16 lg:gap-x-20 gap-y-16 sm:gap-y-20 max-w-6xl mx-auto">
             {teamMembers.map((member, index) => (
               <motion.div key={member.id || index}
@@ -248,9 +249,9 @@ export default function About() {
 
         {/* Valeurs */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <h3 className="text-2xl font-medium text-center mb-10 tracking-tight text-white">
+          <h2 className="text-2xl font-medium text-center mb-10 tracking-tight text-white">
             Nos <span className="text-purple-400">Valeurs</span>
-          </h3>
+          </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
             {values.map((value, index) => (
               <motion.div key={value.title}

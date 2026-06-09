@@ -157,19 +157,12 @@ export default function AISection() {
             className="order-1 lg:order-2"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-6 tracking-tight">
-              Développement Assisté par <span className="gradient-text">IA</span>
+              Solutions Digitales Propulsées par <span className="gradient-text">l'IA</span>
             </h2>
             <p className="text-lg md:text-xl text-white/70 mb-8 leading-relaxed">
-              Linear pour les Agents. Choisissez parmi une variété de agents IA et commencez à déléguer le travail, de la génération de code aux autres tâches techniques.
+              Confiez vos projets digitaux à notre équipe augmentée par l'intelligence artificielle — du développement web à l'automatisation de vos processus métier.
             </p>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 bg-white text-darkBg rounded-lg font-semibold text-sm hover:bg-white/90 transition-all"
-            >
-              Découvrir les Agents IA
-            </motion.button>
           </motion.div>
         </div>
       </div>

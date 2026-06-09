@@ -32,7 +32,7 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <Link to="/" className="inline-block mb-4">
-              <img src="/logoulytech.png" alt="UlyTech Logo" className="h-8 w-auto" />
+              <img src="/logoulytech.webp" alt="UlyTech Logo" className="h-8 w-auto" />
             </Link>
             
             <ul className="space-y-2 mb-6">

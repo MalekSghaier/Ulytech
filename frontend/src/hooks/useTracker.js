@@ -13,7 +13,7 @@ export default function useTracker() {
     if (lastTracked === today) return;
 
     // Sinon enregistrer et marquer
-    fetch('http://localhost:5000/api/analytics/track', {
+    fetch((process.env.REACT_APP_API_URL || 'http://localhost:5000/api') + '/analytics/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ page: location.pathname }),

@@ -49,7 +49,7 @@ const handleSubmit = async (e) => {
       >
         {/* Logo */}
         <Link to="/" className="flex justify-center mb-2">
-          <img src="/logoulytech.png" alt="UlyTech Logo" className="h-8 w-auto" />
+          <img src="/logoulytech.webp" alt="UlyTech Logo" className="h-8 w-auto" />
         </Link>
 
         {/* Login Form */}
@@ -96,7 +96,9 @@ const handleSubmit = async (e) => {
                 Se souvenir
               </label>
               <button type="button" className="text-purple-400 hover:text-purple-300">
-                Mot de passe oublié?
+                <Link to="/forgot-password" className="text-sm text-white/40 hover:text-purple-400 transition-colors">
+                  Mot de passe oublié ?
+                </Link>
               </button>
             </div>
 

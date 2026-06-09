@@ -57,7 +57,7 @@ export default function Navbar() {
             whileHover={{ opacity: 0.8 }}
             className="flex items-center md:ml-[15%] h-full translate-y-[4px]"
           >
-            <img src="/logoulytech.png" alt="UlyTech Logo" className="h-[32px] md:h-[40px] w-auto object-contain" />
+            <img src="/logoulytech.webp" alt="UlyTech Logo" className="h-[32px] md:h-[40px] w-auto object-contain" />
           </motion.a>
 
           {/* Desktop Menu - Centered */}
