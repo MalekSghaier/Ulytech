@@ -68,13 +68,12 @@ export default function CTA() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-semibold mb-6 text-white leading-tight">
-              Nous créons l outil de gestion de projets pour les équipes qui se soucient de la qualité
+              De l'idée au produit IA en production — sans friction, sans délai
             </h2>
             <p className="text-white/50 leading-relaxed mb-6">
-              La technologie était autrefois magique. Mais une grande partie de cette magie s est perdue avec le temps, remplacée par des outils et des pratiques médiocres qui ralentissent les équipes et freinent le travail de qualité. Frustrés par le statu quo, nous avons décidé de construire quelque chose de meilleur. Quelque chose que les équipes aimeraient vraiment utiliser.
-            </p>
+             Vous avez une idée, un problème à résoudre ou un processus à automatiser. Nous prenons en charge tout le reste — conception, développement, déploiement. En quelques semaines, votre solution IA est en production et génère de la valeur réelle pour votre entreprise.            </p>
             <p className="text-white/50 leading-relaxed">
-              Ce qui a commencé comme un simple tracker de problèmes, a depuis évolué en un système puissant de gestion de projets qui rationalise les flux de travail tout au long du processus de développement. Nous ne considérons pas UlyTech comme un simple "outil" meilleur, mais comme une meilleure "façon" de construire des logiciels.
+             Pas de promesses floues, pas de projets qui s'éternisent. La méthode UlyTech est simple : comprendre votre métier, construire rapidement, livrer proprement. Du plus petit outil IA à la solution SaaS la plus ambitieuse — chaque solution est taillée pour votre réalité, pas pour un cas générique.             
             </p>
           </motion.div>
 
@@ -86,13 +85,13 @@ export default function CTA() {
             transition={{ delay: 0.1 }}
           >
             <h3 className="text-2xl md:text-3xl font-semibold mb-6 text-white leading-tight">
-              Nous nous soucions profondément de la qualité de notre travail
+              La qualité et la rapidité ne sont pas un choix — chez UlyTech, c'est les deux
             </h3>
             <p className="text-white/50 leading-relaxed mb-6">
-              UlyTech a toujours été une entreprise entièrement distante. Aujourdhui, notre petite mais puissante équipe est répartie entre le Afrique du Nord et l Europe. Ce qui nous unit, c est notre concentration implacable, notre exécution rapide et notre passion pour le artisanat logiciel.
+              L'équipe UlyTech est basée à Kairouan, au cœur de la Tunisie. Une équipe jeune, technique et passionnée par l'intelligence artificielle — qui comprend les défis des entreprises tunisiennes et nord-africaines mieux que quiconque.
             </p>
             <p className="text-white/50 leading-relaxed mb-8">
-              Nous sommes tous des créateurs dans l âme et nous nous soucions profondément de la qualité de notre travail, jusqu au moindre détail. Aujourd hui, des milliers d équipes à travers le monde utilisent nos solutions pour construire leurs produits.
+              Chaque projet est traité avec rigueur, de la première ligne de code jusqu'à la mise en production. Aucun détail n'est laissé au hasard — parce que la réussite de votre projet, c'est aussi la nôtre.
             </p>
               <motion.button
                 whileHover={{ scale: 1.02 }}

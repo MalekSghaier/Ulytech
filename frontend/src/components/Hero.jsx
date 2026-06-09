@@ -8,11 +8,12 @@ import { FiArrowRight, FiPlay, FiCode, FiCpu, FiCloud } from 'react-icons/fi';
 export default function Hero() {
 
   const phrases = [
-    { avant: 'Créateurs de',   accent: 'Produits Numériques',  apres: 'Innovants'     },
-    { avant: 'Ingénierie de',  accent: 'Solutions Digitales',  apres: 'Intelligentes' },
-    { avant: 'Architectes de', accent: 'Systèmes IA',          apres: 'Performants'   },
-    { avant: 'Bâtisseurs de',  accent: 'Plateformes SaaS',     apres: 'Évolutives'    },
-    { avant: 'Experts en',     accent: 'Transformation',       apres: 'Digitale'      },
+    { avant: 'Développement',    accent: 'd\'Applications IA',   apres: 'Sur Mesure'      },
+    { avant: 'Automatisation',   accent: 'Intelligente',         apres: 'de vos Processus'},
+    { avant: 'Agence IA',        accent: '& SaaS',               apres: 'Sans Frontières'      },
+    { avant: 'Bâtisseurs de',    accent: 'Plateformes SaaS',     apres: 'Évolutives'      },
+    { avant: 'Experts en',       accent: 'Intelligence',         apres: 'Artificielle'    },
+    { avant: 'Experts en',       accent: 'Transformation',       apres: 'Digitale'      },
   ];
 
   const [phraseIndex, setPhraseIndex] = useState(0);
@@ -96,7 +97,7 @@ export default function Hero() {
 
             <motion.h1
               style={titleStyle}
-              className="text-5xl md:text-6xl lg:text-[4.2rem] font-light mb-6 min-h-[300px] flex flex-col justify-start leading-[1.18]"
+              className="text-5xl md:text-6xl lg:text-[4.2rem] font-light mb-6 flex flex-col justify-start gap-6 leading-[1.18]"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
             >
               <span className="text-white/90 block">
@@ -113,11 +114,11 @@ export default function Hero() {
               </span>
             </motion.h1>
 
-            <motion.p className="text-base md:text-lg text-white/50 mb-8 max-w-xl leading-relaxed"
+            <motion.p className="text-base md:text-lg text-white/50 mt-10 mb-8 max-w-xl leading-relaxed"
               style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 300 }}
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
-              Nous combinons expertise technique, innovation et compréhension métier pour créer des produits digitaux{' '}
-              <span className="text-violet-300/80">évolutifs, sécurisés et intelligents</span>.
+              Nous concevons des applications IA, des plateformes SaaS et des systèmes d'automatisation{' '}
+              <span className="text-violet-300/80">rapides, intelligents et évolutifs</span>.
             </motion.p>
 
             <motion.div className="flex flex-wrap gap-5 mb-8"

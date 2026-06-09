@@ -10,8 +10,8 @@ export default function Footer() {
 
   const quickLinks = [
     { name: 'Accueil', href: '/', isRoute: true },
-    { name: 'Services', href: '#services', isRoute: false },
-    { name: 'À Propos', href: '#about', isRoute: false },
+    { name: 'Services', href: '/#services', isRoute: false },
+    { name: 'À Propos', href: '/#about', isRoute: false },
     { name: 'Contact', href: '/contact', isRoute: true }
   ];
 
@@ -124,7 +124,7 @@ export default function Footer() {
             </div>
             <div>
               <div className="text-xs text-white/30 mb-1">Localisation</div>
-              <div className="text-sm text-white/60">Kairouan</div>
+              <div className="text-sm text-white/60">Kairouan 3100, Tunisie</div>
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function Footer() {
         <div className="py-6 border-t border-white/[0.08]">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-white/30 text-xs">
-              © 2026 UlyTech SARL. Tous droits réservés. 
+              © 2026 UlyTech SARL.Tous droits réservés. 
             </div>
             
             <div className="flex items-center gap-6">
@@ -157,7 +157,7 @@ export default function Footer() {
         viewport={{ once: true }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-8 right-8 w-10 h-10 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.08] rounded-lg flex items-center justify-center transition-all z-50"
+        className="fixed bottom-8 right-24 w-10 h-10 bg-white/[0.08] hover:bg-white/[0.12] border border-white/[0.08] rounded-lg flex items-center justify-center transition-all z-50"
         aria-label="Scroll to top"
       >
         <FiArrowUp className="w-5 h-5 text-white/60" />

@@ -104,10 +104,10 @@ export default function BuildPage() {
           >
             <p className="text-xs md:text-sm text-white/40 mb-3 md:mb-4 tracking-wider uppercase">ulytech Solutions</p>
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-semibold text-white mb-4 md:mb-6 tracking-tight leading-tight">
-              Construisez le avenir avec<br /><span className="text-purple-400">nos solutions digitales</span>
+              CConstruisez l'avenir avec<br /><span className="text-purple-400">l'IA & l'automatisation</span>
             </h1>
             <p className="text-sm md:text-lg text-white/50 max-w-3xl mx-auto px-4">
-              Développement web moderne et intelligence artificielle<br className="hidden sm:block" />pour transformer votre entreprise
+              Plateformes SaaS, agents IA et systèmes d'automatisation sur mesure<br className="hidden sm:block" />pour transformer votre entreprise
             </p>
           </motion.div>
 

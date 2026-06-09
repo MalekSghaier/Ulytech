@@ -14,6 +14,7 @@ import Chatbot from './components/Chatbot';
 import Contact from './components/Contact';
 import Background from './components/Background';
 import useTracker from './hooks/useTracker';
+import ScrollToTop from './components/ScrollToTop';
 
 
 import './styles/index.css';
@@ -54,6 +55,7 @@ function AppContent() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AppContent />
       <Background /> 
       <CookieConsent />

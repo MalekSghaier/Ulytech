@@ -104,10 +104,10 @@ export default function Services() {
             transition={{ duration: 0.8 }}
           >
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight">
-              Nos <span className="gradient-text">Services</span>
+              Nos <span className="gradient-text">Solutions IA</span>
             </h2>
             <p className="text-lg md:text-xl text-white/70 mb-6 leading-relaxed max-w-xl">
-              Nous fournissons des solutions digitales complètes qui stimulent linnovation et la croissance pour les entreprises de toutes tailles.
+              De l'automatisation intelligente aux plateformes SaaS sur mesure — nous construisons des systèmes qui apprennent, s'adaptent et performent pour votre entreprise.
             </p>
 
             {/* Scrollable Services List */}

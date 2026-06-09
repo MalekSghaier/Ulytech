@@ -157,12 +157,12 @@ export default function AISection() {
             className="order-1 lg:order-2"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-6 tracking-tight">
-              Solutions Digitales Propulsées par <span className="gradient-text">l'IA</span>
+              Automatisez vos Processus avec <span className="gradient-text">l'IA</span>
             </h2>
             <p className="text-lg md:text-xl text-white/70 mb-8 leading-relaxed">
-              Confiez vos projets digitaux à notre équipe augmentée par l'intelligence artificielle — du développement web à l'automatisation de vos processus métier.
+              Nos solutions d'intelligence artificielle prennent en charge vos tâches répétitives, analysent vos données en temps réel et font évoluer votre business sans effort humain supplémentaire.
             </p>
-
+            
           </motion.div>
         </div>
       </div>
