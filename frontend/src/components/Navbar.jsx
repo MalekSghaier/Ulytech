@@ -1,14 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FiLogIn, FiUserPlus } from 'react-icons/fi';
+import { FiLogIn, FiUserPlus, FiUser, FiLogOut, FiGrid } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showProduitMenu, setShowProduitMenu] = useState(false);
   const [showMobileProduit, setShowMobileProduit] = useState(false);
   const [closeTimeout, setCloseTimeout] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [user, setUser] = useState(null);
+  const userMenuRef = useRef(null);
+
+  // Lit l'utilisateur stocké en sessionStorage
+  // (sessionStorage = effacé à la fermeture complète du navigateur,
+  // contrairement à localStorage qui persiste indéfiniment)
+  const loadUser = () => {
+    try {
+      const stored = sessionStorage.getItem('user');
+      setUser(stored ? JSON.parse(stored) : null);
+    } catch {
+      setUser(null);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,7 +35,41 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Chargement initial
+    loadUser();
 
+    // Se met à jour quand le login/logout se déclenche ailleurs dans l'app
+    // (navigate() seul ne remonte pas la Navbar, donc on écoute un événement custom)
+    window.addEventListener('authChange', loadUser);
+
+    return () => {
+      window.removeEventListener('authChange', loadUser);
+    };
+  }, []);
+
+  // Ferme le menu utilisateur quand on clique en dehors de celui-ci
+  useEffect(() => {
+    if (!showUserMenu) return;
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserMenu]);
+
+  const handleLogout = () => {
+    const prenom = user?.prenom || user?.nom || '';
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
+    setShowUserMenu(false);
+    setUser(null);
+    window.dispatchEvent(new Event('authChange'));
+    toast.success(prenom ? `À bientôt ${prenom} !` : 'Vous êtes déconnecté');
+    navigate('/');
+  };
 
   const navItems = [
     { name: 'Produit', href: '/', isRoute: true, hasDropdown: true },
@@ -95,7 +146,7 @@ export default function Navbar() {
                         <div className="grid grid-cols-[1fr_2fr] gap-8 relative">
                           {/* Vertical Divider Line */}
                           <div className="absolute left-[calc(33.33%-1rem)] top-0 bottom-0 w-px bg-white/[0.08] backdrop-blur-sm" />
-                          
+
                           {/* Left Column: Core Features */}
                           <div>
                             <h3 className="text-xs font-medium text-white/40 mb-3 uppercase tracking-wider">Fonctionnalités principales</h3>
@@ -171,16 +222,65 @@ export default function Navbar() {
 
           {/* Right Side Buttons */}
           <div className="hidden md:flex items-center space-x-3 ml-auto mr-[10%]">
-            <Link to="/login">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center space-x-1.5 px-4 py-1.5 bg-white text-darkBg rounded-md font-medium text-[15px] hover:bg-white/90 transition-all duration-150"
-              >
-                <FiLogIn className="w-[15px] h-[15px]" />
-                <span>Se connecter</span>
-              </motion.button>
-            </Link>
+            {user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setShowUserMenu((prev) => !prev)}
+                  className="flex items-center space-x-2 px-3 py-1.5 text-white/80 hover:text-white transition-colors duration-150 text-[15px] font-normal rounded-md hover:bg-white/5"
+                >
+                  <FiUser className="w-[15px] h-[15px]" />
+                  <span>{user.nom || user.prenom || user.email}</span>
+                </button>
+
+                {showUserMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full right-0 mt-2 w-56 backdrop-blur-xl bg-darkBg/95 border border-white/[0.08] rounded-md p-2 shadow-2xl"
+                  >
+                    {user.role === 'admin' && (
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center space-x-2 px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded transition-colors"
+                      >
+                        <FiGrid className="w-4 h-4" />
+                        <span>Tableau de bord</span>
+                      </Link>
+                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded transition-colors text-left"
+                    >
+                      <FiLogOut className="w-4 h-4" />
+                      <span>Se déconnecter</span>
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="flex items-center space-x-1.5 text-white/60 hover:text-white transition-colors duration-150 text-[15px] font-normal px-3 py-1.5"
+                >
+                  <FiLogIn className="w-[15px] h-[15px]" />
+                  <span>Se connecter</span>
+                </Link>
+
+                <Link to="/register">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center space-x-1.5 px-4 py-1.5 bg-white text-darkBg rounded-md font-medium text-[15px] hover:bg-white/90 transition-all duration-150"
+                  >
+                    <FiUserPlus className="w-[15px] h-[15px]" />
+                    <span>S'inscrire</span>
+                  </motion.button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -284,19 +384,55 @@ export default function Navbar() {
                 </a>
               )
             ))}
-            <div className="flex gap-2 mt-2">
-              <Link to="/login" className="flex-1">
-                <button className="w-full px-5 py-3 text-white border border-white/10 rounded-lg font-semibold text-sm hover:bg-white/5 transition-all flex items-center justify-center space-x-2">
-                  <FiLogIn className="w-4 h-4" />
-                  <span>Se connecter</span>
-                </button>
-              </Link>
-              <Link to="/register" className="flex-1">
-                <button className="w-full px-5 py-3 bg-white text-darkBg rounded-lg font-semibold text-sm hover:bg-white/90 transition-all flex items-center justify-center space-x-2">
-                  <FiUserPlus className="w-4 h-4" />
-                  <span>S inscrire</span>
-                </button>
-              </Link>
+
+            {/* Mobile auth section */}
+            <div className="mt-2 pt-2 border-t border-white/5">
+              {user ? (
+                <>
+                  {user.role === 'admin' && (
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center space-x-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <FiGrid className="w-[15px] h-[15px]" />
+                      <span>Tableau de bord</span>
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full flex items-center space-x-2 px-4 py-3 text-white/70 hover:text-white hover:bg-white/5 rounded-lg transition-all text-left"
+                  >
+                    <FiLogOut className="w-[15px] h-[15px]" />
+                    <span>Se déconnecter</span>
+                  </button>
+                </>
+              ) : (
+                <div className="flex items-center space-x-3 px-4 py-2">
+                  <Link
+                    to="/login"
+                    className="flex items-center space-x-1.5 text-white/60 hover:text-white transition-colors duration-150 text-[15px] font-normal"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <FiLogIn className="w-[15px] h-[15px]" />
+                    <span>Se connecter</span>
+                  </Link>
+
+                  <Link to="/register" onClick={() => setIsOpen(false)}>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex items-center space-x-1.5 px-4 py-1.5 bg-white text-darkBg rounded-md font-medium text-[15px] hover:bg-white/90 transition-all duration-150"
+                    >
+                      <FiUserPlus className="w-[15px] h-[15px]" />
+                      <span>S'inscrire</span>
+                    </motion.button>
+                  </Link>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

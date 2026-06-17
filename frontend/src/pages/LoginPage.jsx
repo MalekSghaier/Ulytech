@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 import api from '../api';
 
@@ -20,25 +21,55 @@ export default function LoginPage() {
     });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  try {
-    const response = await api.post('/auth/login', {
-      email: formData.email,
-      mot_de_passe: formData.password,  
-    });
-    localStorage.setItem('token', response.data.token);  
-    localStorage.setItem('user', JSON.stringify(response.data.user));
-    navigate('/dashboard');
-  } catch (err) {
-    setError(err.response?.data?.message || 'Erreur de connexion');
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        mot_de_passe: formData.password,
+      });
+      
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('user', JSON.stringify(response.data.user));
+
+      window.dispatchEvent(new Event('authChange'));
+
+      const prenom = response.data.user.prenom || response.data.user.nom || response.data.user.email;
+      toast.custom((t) => (
+        <motion.div
+          initial={{ opacity: 0, y: -40, scale: 0.9 }}
+          animate={{ opacity: t.visible ? 1 : 0, y: t.visible ? 0 : -40, scale: t.visible ? 1 : 0.9 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="flex items-center gap-3 px-5 py-4 rounded-2xl backdrop-blur-xl bg-white/[0.07] border border-white/[0.12] shadow-2xl"
+          style={{ minWidth: '300px' }}
+        >
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-white text-sm font-medium">Connexion réussie</p>
+            <p className="text-white/50 text-xs mt-0.5">Bienvenue {prenom} 👋</p>
+          </div>
+        </motion.div>
+      ), { duration: 3000 });
+
+      // Rediriger selon le rôle
+      if (response.data.user.role === 'admin') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur de connexion');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">

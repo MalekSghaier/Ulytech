@@ -173,7 +173,7 @@ export default function Services() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:flex relative group w-full h-[600px] items-center justify-center"
+            className="relative group w-full h-[250px] sm:h-[400px] lg:h-[600px] flex items-center justify-center"
           >
             {/* Outer container with rotation + depth */}
             <div
@@ -186,9 +186,11 @@ export default function Services() {
                 duration-700 
                 ease-[cubic-bezier(0.22,1,0.36,1)]
                 group-hover:rotate-[-6deg]
-                rotate-[-12deg]
+                rotate-[-6deg]
+                lg:rotate-[-12deg]
                 group-hover:scale-[1.03]
-                scale-[1.4]
+                scale-[1.1]
+                lg:scale-[1.4]
                 w-full
                 h-full
               "
@@ -197,37 +199,17 @@ export default function Services() {
               <img
                 src="/issuesbanding.webp"
                 alt="Services Dashboard"
-                className="
-                  w-full 
-                  h-full
-                  object-cover
-                  opacity-60 
-                  mix-blend-screen 
-                  select-none 
-                  pointer-events-none
-                "
+                className="w-full h-full object-cover opacity-60 mix-blend-screen select-none pointer-events-none"
               />
 
               {/* Subtle dark gradient overlay */}
               <div
-                className="
-                  absolute 
-                  inset-0 
-                  bg-gradient-to-br 
-                  from-transparent 
-                  via-black/40 
-                  to-black/80
-                "
+
               />
 
               {/* Soft glow edge */}
               <div
-                className="
-                  absolute 
-                  -inset-10 
-                  bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)]
-                  pointer-events-none
-                "
+                className="absolute inset-0 bg-gradient-to-br from-transparent via-black/40 to-black/80"
               />
             </div>
           </motion.div>

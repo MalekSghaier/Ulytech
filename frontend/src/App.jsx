@@ -15,6 +15,8 @@ import Contact from './components/Contact';
 import Background from './components/Background';
 import useTracker from './hooks/useTracker';
 import ScrollToTop from './components/ScrollToTop';
+import { Toaster } from 'react-hot-toast';
+
 
 
 import './styles/index.css';
@@ -37,6 +39,8 @@ const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+const DashboardLoginPage = lazy(() => import('./pages/DashboardLoginPage'));
+
 
 
 
@@ -55,6 +59,7 @@ function AppContent() {
 function App() {
   return (
     <Router>
+      <Toaster position="top-center" />
       <ScrollToTop />
       <AppContent />
       <Background /> 
@@ -94,6 +99,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="/dashboard/login" element={<DashboardLoginPage />} />
+
         </Routes>
       </Suspense>
     </Router>

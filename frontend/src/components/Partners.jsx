@@ -65,12 +65,26 @@ export default function Partners() {
 
 function ClientCard({ client }) {
   const [hovered, setHovered] = useState(false);
+  const ref = React.useRef(null);
   const initiales = client.nom.slice(0, 2).toUpperCase();
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setHovered(true);
+        else setHovered(false);
+      },
+      { threshold: 0.6 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onTouchStart={() => setHovered(true)} 
+      onTouchEnd={() => setTimeout(() => setHovered(false), 600)}
       style={{
         position: 'relative',
         borderRadius: '16px',

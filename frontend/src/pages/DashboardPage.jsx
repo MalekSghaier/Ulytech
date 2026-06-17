@@ -263,12 +263,12 @@ function VueApercu({ user }) {
       {/* ── Entités UlyTech ── */}
       <div>
         <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Ressources UlyTech</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
           {entityCards.map((card, i) => (
             <motion.div key={card.label}
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
-              className="relative bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 group hover:border-white/[0.16] transition-all duration-300 overflow-hidden"
+              className="relative bg-white/[0.04] border border-white/[0.08] rounded-2xl p-3 sm:p-4 group hover:border-white/[0.16] transition-all duration-300 overflow-hidden"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 style={{ background: `radial-gradient(circle at 50% 0%, ${card.color}15 0%, transparent 70%)` }} />
@@ -279,7 +279,7 @@ function VueApercu({ user }) {
                   <path d={card.icon} />
                 </svg>
               </div>
-              <p className="text-3xl font-light mb-1" style={{ color: card.color, letterSpacing: '-0.02em' }}>
+              <p className="text-2xl sm:text-3xl font-light mb-1" style={{ color: card.color, letterSpacing: '-0.02em' }}>
                 {card.value}
               </p>
               <p className="text-white/40 text-xs leading-tight">{card.label}</p>
@@ -816,9 +816,24 @@ function VueConversations() {
   const [messages, setMessages] = useState([]);
   const [confirmId, setConfirmId] = useState(null);
 
-  const fetchConversations = async () => { const res = await fetch(`${API}/chat/conversations`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setConversations(Array.isArray(data) ? data : []); };
-  const fetchMessages = async (id) => { const res = await fetch(`${API}/chat/conversations/${id}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); const data = await res.json(); setMessages(Array.isArray(data) ? data : []); };
-  const handleDelete = async () => { await fetch(`${API}/chat/conversations/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }); setConfirmId(null); if (selected?.id === confirmId) { setSelected(null); setMessages([]); } fetchConversations(); };
+  const fetchConversations = async () => {
+    const res = await fetch(`${API}/chat/conversations`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    setConversations(Array.isArray(data) ? data : []);
+  };
+
+  const fetchMessages = async (id) => {
+    const res = await fetch(`${API}/chat/conversations/${id}/messages`, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    const data = await res.json();
+    setMessages(Array.isArray(data) ? data : []);
+  };
+
+  const handleDelete = async () => {
+    await fetch(`${API}/chat/conversations/${confirmId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
+    setConfirmId(null);
+    if (selected?.id === confirmId) { setSelected(null); setMessages([]); }
+    fetchConversations();
+  };
 
   useEffect(() => { fetchConversations(); }, []);
   useEffect(() => { if (selected) fetchMessages(selected.id); }, [selected]);
@@ -826,8 +841,10 @@ function VueConversations() {
   const formatDate = (d) => new Date(d).toLocaleDateString('fr-TN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="flex gap-5 h-[calc(100vh-180px)]">
-      <div className="w-72 flex-shrink-0 flex flex-col gap-3 overflow-y-auto pr-1">
+    <div className="flex flex-col lg:flex-row gap-5 h-[calc(100vh-180px)]">
+
+      {/* Liste conversations */}
+      <div className={`lg:w-72 flex-shrink-0 flex-col gap-3 overflow-y-auto pr-1 ${selected ? 'hidden lg:flex' : 'flex'}`}>
         <p className="text-white/50 text-sm mb-2">{conversations.length} discussion{conversations.length > 1 ? 's' : ''}</p>
         {conversations.length === 0 && <p className="text-white/20 text-sm text-center py-12">Aucune discussion</p>}
         {conversations.map((conv, i) => (
@@ -835,9 +852,16 @@ function VueConversations() {
             onClick={() => setSelected(conv)}
             className={`group cursor-pointer p-3.5 rounded-xl border transition-all duration-200 ${selected?.id === conv.id ? 'bg-violet-500/10 border-violet-500/30' : 'bg-white/[0.03] border-white/[0.07] hover:border-white/[0.12] hover:bg-white/[0.05]'}`}>
             <div className="flex items-start justify-between gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center flex-shrink-0"><Icon d={ICONS.chat} size={13} /></div>
-              <div className="flex-1 min-w-0"><p className="text-white/70 text-xs truncate">{conv.premier_message || 'Nouvelle conversation'}</p></div>
-              <button onClick={e => { e.stopPropagation(); setConfirmId(conv.id); }} className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-rose-400 transition-all"><Icon d={ICONS.trash} size={13} /></button>
+              <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                <Icon d={ICONS.chat} size={13} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white/70 text-xs truncate">{conv.premier_message || 'Nouvelle conversation'}</p>
+              </div>
+              <button onClick={e => { e.stopPropagation(); setConfirmId(conv.id); }}
+                className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-rose-400 transition-all">
+                <Icon d={ICONS.trash} size={13} />
+              </button>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-white/30 text-xs">{formatDate(conv.updated_at)}</span>
@@ -846,32 +870,64 @@ function VueConversations() {
           </motion.div>
         ))}
       </div>
-      <div className="flex-1 flex flex-col bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
+
+      {/* Contenu conversation */}
+      <div className={`flex-1 flex-col bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden ${selected ? 'flex' : 'hidden lg:flex'}`}>
         {!selected ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center"><div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-3"><Icon d={ICONS.chat} size={20} /></div><p className="text-white/20 text-sm">Sélectionnez une discussion</p></div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mx-auto mb-3">
+                <Icon d={ICONS.chat} size={20} />
+              </div>
+              <p className="text-white/20 text-sm">Sélectionnez une discussion</p>
+            </div>
           </div>
         ) : (
           <>
             <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <div><p className="text-white/70 text-sm font-medium truncate max-w-xs">{selected.premier_message?.slice(0, 50) || 'Discussion'}</p><p className="text-white/30 text-xs mt-0.5">{formatDate(selected.created_at)} · {selected.total_messages} messages</p></div>
-              <button onClick={() => setConfirmId(selected.id)} className="text-white/20 hover:text-rose-400 transition-colors"><Icon d={ICONS.trash} size={15} /></button>
+              {/* Bouton retour mobile */}
+              <button onClick={() => { setSelected(null); setMessages([]); }}
+                className="lg:hidden text-white/40 hover:text-white mr-3 transition-colors">
+                <Icon d="M15 19l-7-7 7-7" size={16} />
+              </button>
+              <div className="flex-1 min-w-0">
+                <p className="text-white/70 text-sm font-medium truncate max-w-xs">
+                  {selected.premier_message?.slice(0, 50) || 'Discussion'}
+                </p>
+                <p className="text-white/30 text-xs mt-0.5">
+                  {formatDate(selected.created_at)} · {selected.total_messages} messages
+                </p>
+              </div>
+              <button onClick={() => setConfirmId(selected.id)}
+                className="text-white/20 hover:text-rose-400 transition-colors ml-3">
+                <Icon d={ICONS.trash} size={15} />
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
               {messages.map((msg, i) => (
-                <motion.div key={msg.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                <motion.div key={msg.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {msg.role === 'assistant' && <div className="w-6 h-6 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2"><Icon d={ICONS.user} size={12} /></div>}
-                  <div className={`max-w-[75%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${msg.role === 'user' ? 'bg-violet-600/70 text-white rounded-br-sm' : 'bg-white/[0.06] text-white/80 rounded-bl-sm border border-white/[0.05]'}`}>{msg.content}</div>
+                  {msg.role === 'assistant' && (
+                    <div className="w-6 h-6 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">
+                      <Icon d={ICONS.user} size={12} />
+                    </div>
+                  )}
+                  <div className={`max-w-[75%] px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${msg.role === 'user' ? 'bg-violet-600/70 text-white rounded-br-sm' : 'bg-white/[0.06] text-white/80 rounded-bl-sm border border-white/[0.05]'}`}>
+                    {msg.content}
+                  </div>
                 </motion.div>
               ))}
             </div>
           </>
         )}
       </div>
+
       <Modal open={!!confirmId} onClose={() => setConfirmId(null)} title="Supprimer la discussion">
         <div className="space-y-5">
-          <div className="p-4 bg-rose-500/5 border border-rose-500/15 rounded-xl"><p className="text-white/70 text-sm">Tous les messages seront supprimés.</p></div>
+          <div className="p-4 bg-rose-500/5 border border-rose-500/15 rounded-xl">
+            <p className="text-white/70 text-sm">Tous les messages seront supprimés.</p>
+          </div>
           <div className="flex gap-3">
             <button onClick={() => setConfirmId(null)} className="flex-1 py-2.5 bg-white/5 text-white/60 rounded-lg text-sm">Annuler</button>
             <button onClick={handleDelete} className="flex-1 py-2.5 bg-rose-500/20 text-rose-300 rounded-lg text-sm">Supprimer</button>
@@ -899,13 +955,22 @@ export default function DashboardPage() {
   const [section, setSection] = useState('apercu');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (!stored) { navigate('/login'); return; }
-    setUser(JSON.parse(stored));
-  }, [navigate]);
+useEffect(() => {
+  const stored = localStorage.getItem('user');
+  if (!stored) { navigate('/dashboard/login'); return; }
+  const parsedUser = JSON.parse(stored);
+  if (parsedUser.role !== 'admin') {
+    navigate('/');
+    return;
+  }
+  setUser(parsedUser);
+}, [navigate]);
 
-  const handleLogout = () => { localStorage.removeItem('token'); localStorage.removeItem('user'); navigate('/login'); };
+  const handleLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  navigate('/dashboard/login');
+  };
 
   if (!user) return null;
 
